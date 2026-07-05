@@ -5,8 +5,6 @@ export interface Manifestation {
   affirmation: string;
   why: string;
   achieved: boolean;
-  /** Pastel backdrop when there is no image. */
-  hue: string;
-  /** Durable file URI of a picked image. */
+  /** Durable file URI of a picked image; accent gradient shown when absent. */
   imageUri?: string;
 }

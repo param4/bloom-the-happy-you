@@ -5,10 +5,11 @@ import { Platform, Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { useDailyReminder } from '@/hooks/useDailyReminder';
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 
 /** Daily reminder row — a gentle nudge to visit your vision. */
 export function ReminderRow() {
+  const { colors } = useTheme();
   const { time, updateTime, permissionDenied } = useDailyReminder();
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -20,25 +21,25 @@ export function ReminderRow() {
     : '--:--';
 
   return (
-    <Card className="mb-5 rounded-[18px] p-4">
+    <Card bordered className="mb-5 rounded-[18px] p-4">
       <View className="flex-row items-center gap-3">
-        <Bell size={20} color={colors.peachDeep} />
+        <Bell size={20} color={colors.accentDeep} />
         <View className="flex-1">
-          <Text className="font-display text-[15px] text-ink">Daily reminder</Text>
+          <Text className="font-serif text-base text-ink">Daily reminder</Text>
           <Text className="font-body text-xs text-ink-soft">
             A gentle nudge to visit your vision.
           </Text>
         </View>
         <Pressable
           onPress={() => setPickerOpen(true)}
-          className="rounded-xl border border-line px-2.5 py-2"
+          className="rounded-xl border border-line bg-cream px-2.5 py-2"
         >
           <Text className="font-body text-[15px] text-ink">{label}</Text>
         </Pressable>
       </View>
 
       {permissionDenied && (
-        <Text className="mt-2 font-body text-xs text-peach-deep">
+        <Text className="mt-2 font-body text-xs text-accent-deep">
           Notifications are off for Bloom — enable them in Settings to get your nudge.
         </Text>
       )}

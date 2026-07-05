@@ -10,11 +10,12 @@ import { useRouter } from 'expo-router';
 import type { ResurfaceItem } from '@/domain/resurface';
 import { daysBetween } from '@/lib/dates';
 import { useServices } from '@/providers/ServicesProvider';
-import { colorToCream } from '@/theme/gradients';
+import { useTheme } from '@/theme/ThemeProvider';
 
 /** Resurfacing modal — "here's you, N days ago, feeling good." */
 export default function LiftMeUpModal() {
   const router = useRouter();
+  const { gradients } = useTheme();
   const { resurface } = useServices();
   const [item, setItem] = useState<ResurfaceItem | null | 'loading'>('loading');
 
@@ -29,7 +30,7 @@ export default function LiftMeUpModal() {
   return (
     <ModalCard>
       <View className="items-center">
-        <Text className="font-display text-[13px] uppercase tracking-widest text-lav-deep">
+        <Text className="font-body-extrabold text-[13px] uppercase tracking-widest text-accent-deep">
           A little light for right now
         </Text>
 
@@ -40,23 +41,23 @@ export default function LiftMeUpModal() {
           </Text>
         ) : (
           <>
-            <Text className="my-3 text-center font-display text-[22px] leading-7 text-ink">
+            <Text className="my-3 text-center font-serif text-[24px] leading-8 text-ink">
               Here's you, {daysBetween(dateKey!)} days ago, feeling good.
             </Text>
 
             {item.kind === 'video' ? (
               <GlowView className="w-full" style={{ borderRadius: 20 }}>
                 <GradientCard
-                  colors={colorToCream(item.video.color)}
+                  colors={gradients.lift}
                   className="h-[180px] w-full items-center justify-center gap-2 rounded-[20px]"
                 >
                   <Play size={40} color="#fff" fill="#fff" />
-                  <Text className="font-display text-base text-white">{item.video.label}</Text>
+                  <Text className="font-serif text-base text-white">{item.video.label}</Text>
                 </GradientCard>
               </GlowView>
             ) : (
-              <View className="w-full rounded-[20px] bg-sage-light p-5">
-                <Text className="text-center font-body-italic text-lg leading-7 text-ink">
+              <View className="w-full rounded-[20px] bg-accent-soft p-5">
+                <Text className="text-center font-serif-italic text-lg leading-7 text-ink">
                   “{item.entry.content}”
                 </Text>
               </View>

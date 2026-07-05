@@ -11,6 +11,7 @@ export interface EntryDraft {
   type: Entry['type'];
   content: string;
   videoUri?: string;
+  audioUri?: string;
 }
 
 interface EntriesState {

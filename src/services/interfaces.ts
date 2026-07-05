@@ -22,6 +22,8 @@ export interface IProfileService {
   logIn(email: string, password: string): Promise<AuthResult>;
   socialSignIn(provider: SocialProvider): Promise<Profile>;
   continueAsGuest(): Promise<Profile>;
+  /** Marks the current profile as having finished onboarding. */
+  completeOnboarding(): Promise<Profile | null>;
   getCurrent(): Promise<Profile | null>;
   signOut(): Promise<void>;
 }

@@ -1,3 +1,4 @@
+import type { Affirmation } from '@/domain/affirmation';
 import type { Entry, EntryKind } from '@/domain/entry';
 import type { Manifestation } from '@/domain/manifestation';
 import type { MoodLog } from '@/domain/mood';
@@ -56,4 +57,11 @@ export interface IMoodRepository {
 export interface ISettingsRepository {
   get(): Promise<Settings>;
   save(settings: Settings): Promise<void>;
+}
+
+/** User-written ("my own") affirmations. */
+export interface IAffirmationRepository {
+  getAll(): Promise<Affirmation[]>;
+  add(affirmation: Affirmation): Promise<void>;
+  remove(id: string): Promise<void>;
 }

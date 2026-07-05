@@ -17,14 +17,14 @@ import { SoftButton } from '@/components/ui/SoftButton';
 import { useServices } from '@/providers/ServicesProvider';
 import type { SocialProvider } from '@/services/interfaces';
 import { useProfileStore } from '@/state/profileStore';
-import { colors } from '@/theme/colors';
-import { gradients } from '@/theme/gradients';
+import { useTheme } from '@/theme/ThemeProvider';
 import { shadows } from '@/theme/shadows';
 
 type Mode = 'signup' | 'login';
 
 export default function Welcome() {
   const router = useRouter();
+  const { colors, gradients } = useTheme();
   const { profileService } = useServices();
   const setProfile = useProfileStore((s) => s.setProfile);
 
@@ -36,6 +36,7 @@ export default function Welcome() {
 
   const enter = (profile: Parameters<typeof setProfile>[0]) => {
     setProfile(profile);
+    // The (app) gate forwards to onboarding when profile.onboarded is false.
     router.replace('/(app)/(tabs)');
   };
 
@@ -67,13 +68,13 @@ export default function Welcome() {
           <View className="mb-7 items-center">
             <GradientCard
               colors={gradients.heroBadge}
-              className="mb-4 h-[76px] w-[76px] items-center justify-center rounded-3xl"
+              className="mb-4 h-[78px] w-[78px] items-center justify-center rounded-[26px]"
               style={shadows.soft}
             >
-              <Flower2 size={40} color={colors.peach} />
+              <Flower2 size={42} color={colors.accent} />
             </GradientCard>
-            <Text className="font-display text-4xl text-ink">Bloom</Text>
-            <Text className="mt-1 font-body-italic text-base text-ink-soft">
+            <Text className="font-serif text-4xl text-ink">Bloom</Text>
+            <Text className="mt-1 font-serif-italic text-base text-ink-soft">
               Meet the happy you
             </Text>
           </View>
@@ -95,12 +96,12 @@ export default function Welcome() {
                     setError('');
                   }}
                   className={`flex-1 items-center rounded-xl py-2.5 ${
-                    mode === key ? 'bg-white' : ''
+                    mode === key ? 'bg-card' : ''
                   }`}
                   style={mode === key ? shadows.softer : undefined}
                 >
                   <Text
-                    className={`font-display text-sm ${
+                    className={`font-body-extrabold text-sm ${
                       mode === key ? 'text-ink' : 'text-ink-soft'
                     }`}
                   >
@@ -130,7 +131,7 @@ export default function Welcome() {
             />
 
             {error ? (
-              <Text className="mb-3 px-0.5 font-body-semibold text-[13px] text-peach-deep">
+              <Text className="mb-3 px-0.5 font-body-bold text-[13px] text-accent-deep">
                 {error}
               </Text>
             ) : null}
@@ -142,7 +143,7 @@ export default function Welcome() {
             {/* divider */}
             <View className="my-4 flex-row items-center gap-2.5">
               <View className="h-px flex-1 bg-line" />
-              <Text className="font-display text-xs text-ink-soft">or</Text>
+              <Text className="font-body-extrabold text-xs text-ink-soft">or</Text>
               <View className="h-px flex-1 bg-line" />
             </View>
 
@@ -154,22 +155,26 @@ export default function Welcome() {
               >
                 <View
                   className={`h-5 w-5 items-center justify-center rounded-md ${
-                    provider === 'Google' ? 'border border-line bg-white' : 'bg-ink'
+                    provider === 'Google' ? 'border border-line bg-card' : 'bg-ink'
                   }`}
                 >
                   <Text
                     className="text-xs font-body-bold"
-                    style={{ color: provider === 'Google' ? colors.peachDeep : '#fff' }}
+                    style={{ color: provider === 'Google' ? colors.accentDeep : '#fff' }}
                   >
                     {provider[0]}
                   </Text>
                 </View>
-                <Text className="font-display text-sm text-ink">Continue with {provider}</Text>
+                <Text className="font-body-extrabold text-sm text-ink">
+                  Continue with {provider}
+                </Text>
               </Pressable>
             ))}
 
             <Pressable onPress={guest} className="mt-1.5 items-center py-1">
-              <Text className="font-display text-sm text-lav-deep">Explore as a guest</Text>
+              <Text className="font-body-extrabold text-sm text-accent-deep">
+                Explore as a guest
+              </Text>
             </Pressable>
           </View>
 
@@ -194,6 +199,7 @@ interface AuthFieldProps {
 }
 
 function AuthField({ Icon, ...input }: AuthFieldProps) {
+  const { colors } = useTheme();
   return (
     <View className="mb-3 flex-row items-center gap-2.5 rounded-2xl border border-line bg-cream px-3.5 py-3">
       <Icon size={18} color={colors.inkSoft} />

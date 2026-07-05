@@ -14,7 +14,7 @@ export function TodoProgress({ done, total, compact }: TodoProgressProps) {
   return (
     <View className="flex-row items-center gap-3">
       <ProgressBar progress={done / total} height={compact ? 8 : 10} solid={compact} />
-      <Text className="font-display text-[13px] text-ink-soft">
+      <Text className="font-body-extrabold text-[13px] text-ink-soft">
         {compact ? `${done}/${total}` : `${done} of ${total}`}
       </Text>
     </View>

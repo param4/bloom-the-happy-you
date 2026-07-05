@@ -31,5 +31,7 @@ export default function Index() {
     // in the login-hidden case; otherwise fall through to the welcome screen).
     return HIDE_LOGIN ? null : <Redirect href="/(auth)/welcome" />;
   }
+  // New profiles run the 60-second onboarding before entering the app.
+  if (!profile.onboarded) return <Redirect href="/onboarding" />;
   return <Redirect href="/(app)/(tabs)" />;
 }

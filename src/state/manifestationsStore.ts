@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import type { Manifestation } from '@/domain/manifestation';
 import { newId } from '@/lib/ids';
 import { getContainer, type AppServices } from '@/services/container';
-import { colors } from '@/theme/colors';
 
 export interface DreamDraft {
   title: string;
@@ -11,8 +10,6 @@ export interface DreamDraft {
   why: string;
   imageUri?: string;
 }
-
-const HUES = [colors.sageLight, colors.lavLight, colors.creamDeep, '#FCEFD8'];
 
 interface ManifestationsState {
   manifestations: Manifestation[];
@@ -31,7 +28,6 @@ export const createManifestationsStore = (services: AppServices) =>
       const manifestation: Manifestation = {
         id: newId(),
         achieved: false,
-        hue: HUES[get().manifestations.length % HUES.length],
         ...draft,
       };
       await services.manifestations.add(manifestation);

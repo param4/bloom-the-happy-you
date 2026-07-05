@@ -12,12 +12,12 @@ import { TopBar } from '@/components/ui/TopBar';
 import { haptics } from '@/lib/haptics';
 import { useManifestationsStore } from '@/state/manifestationsStore';
 import { useToastStore } from '@/state/toastStore';
-import { colors } from '@/theme/colors';
-import { gradients } from '@/theme/gradients';
+import { useTheme } from '@/theme/ThemeProvider';
 import { shadows } from '@/theme/shadows';
 
 export default function VisionScreen() {
   const router = useRouter();
+  const { colors, gradients } = useTheme();
   const manifestations = useManifestationsStore((s) => s.manifestations);
   const markAchieved = useManifestationsStore((s) => s.markAchieved);
   const flash = useToastStore((s) => s.flash);
@@ -38,7 +38,7 @@ export default function VisionScreen() {
 
   return (
     <Screen padBottom={48}>
-      <TopBar title="Vision Board" tint={colors.lavDeep} />
+      <TopBar title="Vision Board" />
       <View className="px-5">
         <Pressable
           onPress={() => router.push('/(app)/manifestation-moment')}
@@ -46,11 +46,11 @@ export default function VisionScreen() {
           style={shadows.soft}
         >
           <GradientCard
-            colors={gradients.visionMoment}
+            colors={gradients.accentSun}
             className="flex-row items-center gap-2.5 rounded-[20px] p-4"
           >
             <Wand2 size={22} color="#fff" />
-            <Text className="flex-1 font-display text-[15px] text-white">
+            <Text className="flex-1 font-serif text-[17px] text-white">
               Take today's manifestation moment
             </Text>
           </GradientCard>
@@ -67,10 +67,12 @@ export default function VisionScreen() {
                   <Pressable
                     key="add"
                     onPress={() => router.push('/(app)/add-dream')}
-                    className="min-h-[180px] flex-1 items-center justify-center gap-2 rounded-[20px] border-2 border-dashed border-lav"
+                    className="min-h-[180px] flex-1 items-center justify-center gap-2 rounded-[20px] border-2 border-dashed border-accent"
                   >
-                    <Plus size={26} color={colors.lavDeep} />
-                    <Text className="font-display text-[13px] text-lav-deep">Add a dream</Text>
+                    <Plus size={26} color={colors.accentDeep} />
+                    <Text className="font-body-extrabold text-[13px] text-accent-deep">
+                      Add a dream
+                    </Text>
                   </Pressable>
                 ) : (
                   <DreamCard

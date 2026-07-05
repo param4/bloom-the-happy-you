@@ -8,7 +8,6 @@ import { EmptyNote } from '@/components/ui/EmptyNote';
 import { Screen } from '@/components/ui/Screen';
 import { TopBar } from '@/components/ui/TopBar';
 import { useTodosStore } from '@/state/todosStore';
-import { colors } from '@/theme/colors';
 
 export default function TodayScreen() {
   const todos = useTodosStore((s) => s.todos);
@@ -21,7 +20,7 @@ export default function TodayScreen() {
 
   return (
     <Screen>
-      <TopBar title="Today's list" tint={colors.sageDeep} />
+      <TopBar title="Today's list" />
       <View className="px-5">
         <Text className="mb-4 font-body text-sm text-ink-soft">
           A few things to tend to today. Check them off as you go — leaving some unfinished is

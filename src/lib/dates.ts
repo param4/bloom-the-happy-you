@@ -53,6 +53,14 @@ export const fmtDay = (key: DateKey): string =>
     day: 'numeric',
   });
 
+/** e.g. "July 4, 2026" */
+export const fmtLong = (key: DateKey): string =>
+  parseDateKey(key).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
 export const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',

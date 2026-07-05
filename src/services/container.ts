@@ -1,3 +1,4 @@
+import { AsyncStorageAffirmationRepository } from '@/repositories/asyncStorage/AsyncStorageAffirmationRepository';
 import { AsyncStorageEntryRepository } from '@/repositories/asyncStorage/AsyncStorageEntryRepository';
 import { AsyncStorageManifestationRepository } from '@/repositories/asyncStorage/AsyncStorageManifestationRepository';
 import { AsyncStorageMoodRepository } from '@/repositories/asyncStorage/AsyncStorageMoodRepository';
@@ -6,6 +7,7 @@ import { AsyncStorageSettingsRepository } from '@/repositories/asyncStorage/Asyn
 import { AsyncStorageTodoRepository } from '@/repositories/asyncStorage/AsyncStorageTodoRepository';
 import { AsyncStorageVideoRepository } from '@/repositories/asyncStorage/AsyncStorageVideoRepository';
 import type {
+  IAffirmationRepository,
   IEntryRepository,
   IManifestationRepository,
   IMoodRepository,
@@ -49,6 +51,7 @@ export interface AppServices {
   profiles: IProfileRepository;
   moods: IMoodRepository;
   settings: ISettingsRepository;
+  affirmations: IAffirmationRepository;
   // services
   profileService: IProfileService;
   streak: IStreakService;
@@ -70,6 +73,8 @@ export function createContainer(overrides: Partial<AppServices> = {}): AppServic
   const profiles = overrides.profiles ?? new AsyncStorageProfileRepository(kv);
   const moods = overrides.moods ?? new AsyncStorageMoodRepository(kv);
   const settings = overrides.settings ?? new AsyncStorageSettingsRepository(kv);
+  const affirmations =
+    overrides.affirmations ?? new AsyncStorageAffirmationRepository(kv);
 
   return {
     entries,
@@ -79,6 +84,7 @@ export function createContainer(overrides: Partial<AppServices> = {}): AppServic
     profiles,
     moods,
     settings,
+    affirmations,
     profileService: overrides.profileService ?? new ProfileService(profiles),
     streak: overrides.streak ?? new StreakService(settings),
     resurface: overrides.resurface ?? new ResurfaceService(entries, videos, randomPicker),

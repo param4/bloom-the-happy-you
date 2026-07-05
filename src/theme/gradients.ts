@@ -1,37 +1,31 @@
-import { colors } from './colors';
+import type { ThemeColors } from './colors';
 
 type GradientStops = readonly [string, string, ...string[]];
 
 /**
- * Named gradient tuples matching every gradient in Draft.jsx.
- * Tailwind gradient classes don't render in RN — use these with
- * <LinearGradient colors={gradients.x}> (via GradientCard).
+ * Named gradient builders for the redesign. They take the active ThemeColors
+ * (from useTheme) because every gradient is now accent-driven. Tailwind
+ * gradients don't render in RN — use these with <LinearGradient> / GradientCard.
  */
-export const gradients = {
-  /** auth hero badge — 140deg sageLight → lavLight */
-  heroBadge: [colors.sageLight, colors.lavLight] as GradientStops,
-  /** avatar + manifestation-moment CTA — 135deg peach → sun */
-  peachSun: [colors.peach, colors.sun] as GradientStops,
-  /** "show me a happier moment" button — 120deg lavLight → sageLight */
-  lift: [colors.lavLight, colors.sageLight] as GradientStops,
-  /** vision "take today's moment" button — 135deg lav → peach */
-  visionMoment: [colors.lav, colors.peach] as GradientStops,
-  /** todo progress bar — 90deg sage → sun */
-  progress: [colors.sage, colors.sun] as GradientStops,
-  /** all-done banner — 120deg sun(13%) → sageLight */
-  allDone: [`${colors.sun}22`, colors.sageLight] as GradientStops,
-  /** manifested row — 120deg sun(13%) → white */
-  manifested: [`${colors.sun}22`, '#FFFFFF'] as GradientStops,
-} as const;
+export const makeGradients = (c: ThemeColors) =>
+  ({
+    /** auth hero badge / dream card — accentSoft → card (140deg) */
+    heroBadge: [c.accentSoft, c.card] as GradientStops,
+    /** avatar + manifestation-moment CTA — accent → sun (135deg) */
+    accentSun: [c.accent, c.sun] as GradientStops,
+    /** "show me a happier moment" / resurface — accentSoft → card */
+    lift: [c.accentSoft, c.card] as GradientStops,
+    /** todo progress bar — accent → sun (90deg) */
+    progress: [c.accent, c.sun] as GradientStops,
+    /** all-done banner — sun(13%) → accentSoft (120deg) */
+    allDone: [`${c.sun}22`, c.accentSoft] as GradientStops,
+    /** manifested row — sun(13%) → card (120deg) */
+    manifested: [`${c.sun}22`, c.card] as GradientStops,
+    /** branded frame backdrop — accentSoft → card (160deg) */
+    frame: [c.accentSoft, c.card] as GradientStops,
+  }) as const;
 
-/** dream-card / moment backdrop: hue → white (140–160deg) */
-export const hueToWhite = (hue: string): GradientStops => [hue, '#FFFFFF'];
-
-/** video placeholder: clip color → cream (135deg) */
-export const colorToCream = (color: string): GradientStops => [color, colors.cream];
-
-/** affirmation card: tint(13%) → white (135deg) */
-export const tintToWhite = (tint: string): GradientStops => [`${tint}22`, '#FFFFFF'];
+export type Gradients = ReturnType<typeof makeGradients>;
 
 /** Direction presets approximating the web `deg` values. */
 export const gradientDirections = {

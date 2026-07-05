@@ -1,11 +1,19 @@
-import type { PropsWithChildren } from 'react';
-import { Text } from 'react-native';
+import type { PropsWithChildren, ReactNode } from 'react';
+import { Text, View } from 'react-native';
 
-/** Uppercase soft section heading. */
-export function SectionLabel({ children }: PropsWithChildren) {
+interface SectionLabelProps {
+  /** Optional right-aligned action (e.g. "Open list"). */
+  right?: ReactNode;
+}
+
+/** Uppercase soft section heading with an optional right-slot action. */
+export function SectionLabel({ right, children }: PropsWithChildren<SectionLabelProps>) {
   return (
-    <Text className="mb-2.5 font-display text-xs uppercase tracking-widest text-ink-soft">
-      {children}
-    </Text>
+    <View className="mb-2.5 flex-row items-center justify-between">
+      <Text className="font-body-extrabold text-xs uppercase tracking-widest text-ink-soft">
+        {children}
+      </Text>
+      {right}
+    </View>
   );
 }

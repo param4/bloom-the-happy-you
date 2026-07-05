@@ -18,7 +18,8 @@ export class ProfileService implements IProfileService {
     const passError = validatePassword(password);
     if (passError) return { ok: false, error: passError };
 
-    const profile: Profile = { name: name.trim(), email: email.trim() };
+    // New sign-ups go through onboarding.
+    const profile: Profile = { name: name.trim(), email: email.trim(), onboarded: false };
     await this.profiles.save(profile);
     return { ok: true, profile };
   }
@@ -29,7 +30,8 @@ export class ProfileService implements IProfileService {
     const passError = validatePassword(password);
     if (passError) return { ok: false, error: passError };
 
-    const profile: Profile = { name: email.split('@')[0], email: email.trim() };
+    // Returning users skip onboarding.
+    const profile: Profile = { name: email.split('@')[0], email: email.trim(), onboarded: true };
     await this.profiles.save(profile);
     return { ok: true, profile };
   }
@@ -38,15 +40,24 @@ export class ProfileService implements IProfileService {
     const profile: Profile = {
       name: `${provider} friend`,
       email: `you@${provider.toLowerCase()}.com`,
+      onboarded: false,
     };
     await this.profiles.save(profile);
     return profile;
   }
 
   async continueAsGuest(): Promise<Profile> {
-    const profile: Profile = { name: 'friend', email: '' };
+    const profile: Profile = { name: 'friend', email: '', onboarded: false };
     await this.profiles.save(profile);
     return profile;
+  }
+
+  async completeOnboarding(): Promise<Profile | null> {
+    const current = await this.profiles.get();
+    if (!current) return null;
+    const updated: Profile = { ...current, onboarded: true };
+    await this.profiles.save(updated);
+    return updated;
   }
 
   getCurrent(): Promise<Profile | null> {

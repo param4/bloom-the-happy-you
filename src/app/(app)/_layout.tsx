@@ -12,6 +12,8 @@ import { colors } from '@/theme/colors';
 export default function AppLayout() {
   const profile = useProfileStore((s) => s.profile);
   if (!profile) return <Redirect href="/" />;
+  // Gate the app behind onboarding for profiles that haven't finished it.
+  if (!profile.onboarded) return <Redirect href="/onboarding" />;
 
   return (
     <Stack

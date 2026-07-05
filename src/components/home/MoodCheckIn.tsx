@@ -1,12 +1,10 @@
 import { Sparkles } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 
-import { GradientCard } from '@/components/ui/GradientCard';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { LOW_MOODS, type MoodKey } from '@/domain/mood';
 import { MOODS } from '@/constants/moods';
-import { colors } from '@/theme/colors';
-import { gradients } from '@/theme/gradients';
+import { useTheme } from '@/theme/ThemeProvider';
 import { shadows } from '@/theme/shadows';
 
 interface MoodCheckInProps {
@@ -17,42 +15,41 @@ interface MoodCheckInProps {
 
 /** "How are you, honestly?" — low moods surface the lift-me-up button. */
 export function MoodCheckIn({ moodToday, onPick, onLiftMeUp }: MoodCheckInProps) {
+  const { colors } = useTheme();
   const showLift = moodToday !== null && LOW_MOODS.includes(moodToday);
 
   return (
-    <View className="mt-4">
+    <View className="mt-5">
       <SectionLabel>How are you, honestly?</SectionLabel>
       <View className="flex-row gap-2.5">
-        {MOODS.map(({ key, label, Icon, tone }) => {
+        {MOODS.map(({ key, label, Icon }) => {
           const on = moodToday === key;
           return (
             <Pressable
               key={key}
               onPress={() => onPick(key)}
-              className={`flex-1 items-center gap-1.5 rounded-[18px] px-1.5 py-3.5 ${
-                on ? 'bg-white' : 'bg-card'
-              }`}
-              style={[shadows.softer, { borderWidth: 2, borderColor: on ? tone : 'transparent' }]}
+              className="flex-1 items-center gap-1.5 rounded-[18px] bg-card px-1.5 py-3.5"
+              style={[
+                shadows.softer,
+                { borderWidth: 2, borderColor: on ? colors.accent : 'transparent' },
+              ]}
             >
-              <Icon size={24} color={tone} />
-              <Text className="font-display text-xs text-ink">{label}</Text>
+              <Icon size={24} color={on ? colors.accent : colors.inkSoft} />
+              <Text className="font-body-extrabold text-xs text-ink">{label}</Text>
             </Pressable>
           );
         })}
       </View>
 
       {showLift && (
-        <Pressable onPress={onLiftMeUp} className="mt-3">
-          <GradientCard
-            colors={gradients.lift}
-            direction="wide"
-            className="flex-row items-center justify-center gap-2 rounded-2xl py-3.5"
-          >
-            <Sparkles size={18} color={colors.lavDeep} />
-            <Text className="font-display text-[15px] text-lav-deep">
-              Show me a happier moment
-            </Text>
-          </GradientCard>
+        <Pressable
+          onPress={onLiftMeUp}
+          className="mt-3 flex-row items-center justify-center gap-2 rounded-2xl bg-accent-soft py-3.5"
+        >
+          <Sparkles size={18} color={colors.accentDeep} />
+          <Text className="font-body-extrabold text-[15px] text-accent-deep">
+            Show me a happier moment
+          </Text>
         </Pressable>
       )}
     </View>

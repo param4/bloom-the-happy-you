@@ -19,10 +19,11 @@ import { TopBar } from '@/components/ui/TopBar';
 import { useServices } from '@/providers/ServicesProvider';
 import { useManifestationsStore } from '@/state/manifestationsStore';
 import { useToastStore } from '@/state/toastStore';
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function AddDreamScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const { media } = useServices();
   const add = useManifestationsStore((s) => s.add);
   const flash = useToastStore((s) => s.flash);
@@ -62,7 +63,7 @@ export default function AddDreamScreen() {
       className="flex-1 bg-cream"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <TopBar title="Add a dream" tint={colors.lavDeep} />
+      <TopBar title="Add a dream" />
       <ScrollView contentContainerClassName="px-5 pb-10" keyboardShouldPersistTaps="handled">
         <Text className="mb-3 font-body text-[13px] text-ink-soft">
           Write your affirmation as if it's already true.
@@ -77,7 +78,7 @@ export default function AddDreamScreen() {
           ) : (
             <View className="flex-row items-center gap-2">
               <Camera size={18} color={colors.inkSoft} />
-              <Text className="font-display text-sm text-ink-soft">Add a picture</Text>
+              <Text className="font-body-extrabold text-sm text-ink-soft">Add a picture</Text>
             </View>
           )}
         </Pressable>
@@ -106,7 +107,7 @@ export default function AddDreamScreen() {
           <SoftButton primary onPress={save} className="flex-1">
             Add it
           </SoftButton>
-          <SoftButton onPress={() => router.back()}>Cancel</SoftButton>
+          <SoftButton ghost onPress={() => router.back()}>Cancel</SoftButton>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

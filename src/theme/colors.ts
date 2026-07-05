@@ -1,33 +1,67 @@
-const { palette } = require('./palette.js') as {
-  palette: {
-    cream: { DEFAULT: string; deep: string };
+const {
+  BASE,
+  THEMES,
+  DEFAULT_THEME,
+} = require('./palette.js') as {
+  BASE: {
+    cream: string;
     card: string;
-    sage: { DEFAULT: string; light: string; deep: string };
-    lav: { DEFAULT: string; light: string; deep: string };
-    peach: { DEFAULT: string; deep: string };
-    sun: string;
     ink: { DEFAULT: string; soft: string };
     line: string;
+    sun: string;
+    sage: string;
+    blush: string;
   };
+  THEMES: Record<
+    ThemeKey,
+    { accent: string; accentDeep: string; accentSoft: string }
+  >;
+  DEFAULT_THEME: ThemeKey;
 };
 
-/** Flat, typed color tokens for TS code (icons, gradients, shadows…). */
-export const colors = {
-  cream: palette.cream.DEFAULT,
-  creamDeep: palette.cream.deep,
-  card: palette.card,
-  sage: palette.sage.DEFAULT,
-  sageLight: palette.sage.light,
-  sageDeep: palette.sage.deep,
-  lav: palette.lav.DEFAULT,
-  lavLight: palette.lav.light,
-  lavDeep: palette.lav.deep,
-  peach: palette.peach.DEFAULT,
-  peachDeep: palette.peach.deep,
-  sun: palette.sun,
-  ink: palette.ink.DEFAULT,
-  inkSoft: palette.ink.soft,
-  line: palette.line,
+export type ThemeKey = 'terracotta' | 'sage' | 'blush';
+
+export const THEME_KEYS: readonly ThemeKey[] = ['terracotta', 'sage', 'blush'];
+
+export const themes = THEMES;
+export const defaultThemeKey: ThemeKey = DEFAULT_THEME;
+
+/** Fixed (theme-independent) tokens for TS code (icon colors, gradients…). */
+export const base = {
+  cream: BASE.cream,
+  card: BASE.card,
+  ink: BASE.ink.DEFAULT,
+  inkSoft: BASE.ink.soft,
+  line: BASE.line,
+  sun: BASE.sun,
+  sage: BASE.sage,
+  blush: BASE.blush,
 } as const;
 
-export type ColorToken = keyof typeof colors;
+/** A fully-resolved color set for a given theme (base + that theme's accents). */
+export type ThemeColors = typeof base & {
+  accent: string;
+  accentDeep: string;
+  accentSoft: string;
+};
+
+export const resolveTheme = (key: ThemeKey): ThemeColors => ({
+  ...base,
+  ...THEMES[key],
+});
+
+/**
+ * CSS-variable values for a theme, consumed by NativeWind `vars()` so that
+ * className utilities like `bg-accent` recolor live when the theme changes.
+ */
+export const themeVars = (key: ThemeKey): Record<string, string> => ({
+  '--accent': THEMES[key].accent,
+  '--accentDeep': THEMES[key].accentDeep,
+  '--accentSoft': THEMES[key].accentSoft,
+});
+
+/**
+ * Back-compat default export used by non-themed chrome (StatusBar, splash).
+ * Only the fixed base tokens live here; accent colors must come from useTheme().
+ */
+export const colors = base;

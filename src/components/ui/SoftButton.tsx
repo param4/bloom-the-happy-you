@@ -12,8 +12,10 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface SoftButtonProps {
   onPress?: () => void;
-  /** Peach filled variant with a warm glow. */
+  /** Accent-filled variant with a warm glow. */
   primary?: boolean;
+  /** Transparent, bordered variant. */
+  ghost?: boolean;
   disabled?: boolean;
   className?: string;
   style?: StyleProp<ViewStyle>;
@@ -21,10 +23,11 @@ interface SoftButtonProps {
   raw?: boolean;
 }
 
-/** The prototype's rounded soft button with a press-scale spring. */
+/** The redesign's rounded soft button with a press-scale spring. */
 export function SoftButton({
   onPress,
   primary,
+  ghost,
   disabled,
   className,
   style,
@@ -36,23 +39,24 @@ export function SoftButton({
     transform: [{ scale: scale.value }],
   }));
 
+  const bg = primary ? 'bg-accent' : ghost ? 'bg-transparent border border-line' : 'bg-card';
+  const textColor = primary ? 'text-white' : 'text-ink';
+
   return (
     <AnimatedPressable
       onPress={onPress}
       disabled={disabled}
       onPressIn={() => (scale.value = withSpring(0.97, { damping: 20 }))}
       onPressOut={() => (scale.value = withSpring(1, { damping: 20 }))}
-      className={`flex-row items-center justify-center gap-2 rounded-2xl px-5 py-3 ${
-        primary ? 'bg-peach' : 'bg-card'
-      } ${disabled ? 'opacity-50' : ''} ${className ?? ''}`}
-      style={[primary ? shadows.peachGlow : shadows.softer, animatedStyle, style]}
+      className={`flex-row items-center justify-center gap-2 rounded-[14px] px-5 py-3 ${bg} ${
+        disabled ? 'opacity-50' : ''
+      } ${className ?? ''}`}
+      style={[primary ? shadows.accentGlow : ghost ? undefined : shadows.softer, animatedStyle, style]}
     >
       {raw ? (
         children
       ) : (
-        <Text className={`font-display text-[15px] ${primary ? 'text-white' : 'text-ink'}`}>
-          {children}
-        </Text>
+        <Text className={`font-body-extrabold text-[15px] ${textColor}`}>{children}</Text>
       )}
     </AnimatedPressable>
   );

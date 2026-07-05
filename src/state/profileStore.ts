@@ -9,6 +9,8 @@ interface ProfileState {
   hydrate(): Promise<void>;
   /** Called by auth flows after IProfileService persists the profile. */
   setProfile(profile: Profile): void;
+  /** Marks onboarding complete and updates the persisted profile. */
+  completeOnboarding(): Promise<void>;
   signOut(): Promise<void>;
 }
 
@@ -22,6 +24,10 @@ export const createProfileStore = (services: AppServices) =>
     },
     setProfile(profile) {
       set({ profile });
+    },
+    async completeOnboarding() {
+      const updated = await services.profileService.completeOnboarding();
+      if (updated) set({ profile: updated });
     },
     async signOut() {
       await services.profileService.signOut();

@@ -1,10 +1,12 @@
 import { getContainer } from '@/services/container';
 
+import { useAffirmationsStore } from './affirmationsStore';
 import { useEntriesStore } from './entriesStore';
 import { useManifestationsStore } from './manifestationsStore';
 import { useMoodStore } from './moodStore';
 import { useProfileStore } from './profileStore';
 import { useStreakStore } from './streakStore';
+import { useThemeStore } from './themeStore';
 import { useTodosStore } from './todosStore';
 import { useVideosStore } from './videosStore';
 
@@ -21,6 +23,8 @@ export async function hydrateAll(): Promise<void> {
     useVideosStore.getState().hydrate(),
     useMoodStore.getState().hydrate(),
     useStreakStore.getState().hydrate(),
+    useAffirmationsStore.getState().hydrate(),
+    useThemeStore.getState().hydrate(),
   ]);
 }
 
@@ -37,5 +41,6 @@ export async function resetContentData(): Promise<void> {
     useVideosStore.getState().hydrate(),
     useMoodStore.getState().hydrate(),
     useStreakStore.getState().hydrate(),
+    useAffirmationsStore.getState().hydrate(),
   ]);
 }

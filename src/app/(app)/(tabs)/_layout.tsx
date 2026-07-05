@@ -14,8 +14,8 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors } from '@/theme/colors';
 import { fonts } from '@/theme/fonts';
+import { useTheme } from '@/theme/ThemeProvider';
 
 /**
  * Material top-tabs navigator (pager-backed, so screens swipe horizontally),
@@ -33,17 +33,18 @@ const MaterialTopTabs = withLayoutContext<
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   return (
     <MaterialTopTabs
       tabBarPosition="bottom"
       screenOptions={{
         swipeEnabled: true,
-        tabBarActiveTintColor: colors.peachDeep,
+        tabBarActiveTintColor: colors.accentDeep,
         tabBarInactiveTintColor: colors.inkSoft,
         tabBarShowIcon: true,
         tabBarIndicatorStyle: { height: 0 },
         tabBarStyle: {
-          backgroundColor: 'rgba(255,255,255,0.92)',
+          backgroundColor: 'rgba(252,247,236,0.94)',
           borderTopColor: colors.line,
           borderTopWidth: 1,
           paddingBottom: insets.bottom,
@@ -51,7 +52,7 @@ export default function TabsLayout() {
           shadowOpacity: 0,
         },
         tabBarLabelStyle: {
-          fontFamily: fonts.display,
+          fontFamily: fonts.bodyExtraBold,
           fontSize: 11,
           textTransform: 'none',
           marginTop: 2,

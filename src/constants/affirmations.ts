@@ -1,5 +1,3 @@
-import { colors } from '@/theme/colors';
-
 /** CBT-grounded affirmation library from the prototype. */
 export const AFFIRMATIONS: Record<string, string[]> = {
   'Self-worth': [
@@ -27,12 +25,4 @@ export const AFFIRMATIONS: Record<string, string[]> = {
     'There is nowhere I need to rush to right now.',
     'I invite ease into this moment.',
   ],
-};
-
-export const AFFIRMATION_TINTS: Record<string, string> = {
-  'Self-worth': colors.peach,
-  Anxiety: colors.sage,
-  'Self-forgiveness': colors.lav,
-  Confidence: colors.sun,
-  Calm: colors.sageDeep,
 };

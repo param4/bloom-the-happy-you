@@ -8,12 +8,16 @@ module.exports = {
     extend: {
       colors: palette,
       fontFamily: {
-        display: ['Quicksand_700Bold'],
-        'display-semibold': ['Quicksand_600SemiBold'],
-        'display-medium': ['Quicksand_500Medium'],
+        // Fraunces serif — headings, greetings, entry/affirmation body.
+        serif: ['Fraunces_600SemiBold'],
+        'serif-medium': ['Fraunces_500Medium'],
+        'serif-regular': ['Fraunces_400Regular'],
+        'serif-italic': ['Fraunces_400Regular_Italic'],
+        // Nunito — UI labels, buttons, nav, meta.
         body: ['Nunito_400Regular'],
         'body-semibold': ['Nunito_600SemiBold'],
         'body-bold': ['Nunito_700Bold'],
+        'body-extrabold': ['Nunito_800ExtraBold'],
         'body-italic': ['Nunito_400Regular_Italic'],
       },
     },

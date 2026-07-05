@@ -21,6 +21,7 @@ export class DataResetService implements IDataResetService {
       storageKeys.videos,
       storageKeys.moods,
       storageKeys.settings,
+      storageKeys.affirmations,
     ];
     await Promise.all(keys.map((key) => this.kv.remove(key)));
   }

@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { shadows } from '@/theme/shadows';
 
 interface TodoInputProps {
@@ -11,6 +11,7 @@ interface TodoInputProps {
 
 /** "Add something for today…" row. */
 export function TodoInput({ onAdd }: TodoInputProps) {
+  const { colors } = useTheme();
   const [text, setText] = useState('');
 
   const submit = () => {
@@ -33,8 +34,8 @@ export function TodoInput({ onAdd }: TodoInputProps) {
       />
       <Pressable
         onPress={submit}
-        className="w-12 items-center justify-center rounded-2xl bg-peach"
-        style={shadows.peachGlow}
+        className="w-12 items-center justify-center rounded-2xl bg-accent"
+        style={shadows.accentGlow}
         accessibilityLabel="Add task"
       >
         <Plus size={22} color="#fff" />

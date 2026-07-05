@@ -7,8 +7,7 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 
 import { Card } from '@/components/ui/Card';
 import { SoftButton } from '@/components/ui/SoftButton';
-import { colors } from '@/theme/colors';
-import { shadows } from '@/theme/shadows';
+import { useTheme } from '@/theme/ThemeProvider';
 
 type StageState = 'idle' | 'recording' | 'preview' | 'unavailable';
 
@@ -22,6 +21,7 @@ interface CameraStageProps {
  * the prototype's "save a joy note" path instead of failing.
  */
 export function CameraStage({ onSave }: CameraStageProps) {
+  const { colors } = useTheme();
   const [state, setState] = useState<StageState>('idle');
   const [label, setLabel] = useState('');
   const [recordedUri, setRecordedUri] = useState<string | null>(null);
@@ -68,15 +68,15 @@ export function CameraStage({ onSave }: CameraStageProps) {
   };
 
   return (
-    <Card className="p-4">
-      <Text className="font-display text-[17px] text-ink">Capture a happy moment</Text>
+    <Card bordered className="p-4">
+      <Text className="font-serif text-[18px] text-ink">Capture a happy moment</Text>
       <Text className="mb-3 font-body text-[13px] text-ink-soft">
         A message from today's you to a future, low-day you.
       </Text>
 
       <View
         className="items-center justify-center overflow-hidden rounded-[18px]"
-        style={{ aspectRatio: 4 / 3, backgroundColor: '#2b2822' }}
+        style={{ aspectRatio: 4 / 3, backgroundColor: '#2b2620' }}
       >
         {state === 'recording' ? (
           <>
@@ -128,11 +128,11 @@ export function CameraStage({ onSave }: CameraStageProps) {
         {state === 'idle' && (
           <SoftButton primary onPress={start} className="flex-1" raw>
             <Camera size={18} color="#fff" />
-            <Text className="font-display text-[15px] text-white">Record</Text>
+            <Text className="font-body-extrabold text-[15px] text-white">Record</Text>
           </SoftButton>
         )}
         {state === 'recording' && (
-          <SoftButton primary onPress={stop} className="flex-1 bg-lav-deep" style={shadows.lavGlow}>
+          <SoftButton primary onPress={stop} className="flex-1 bg-accent-deep">
             Stop & keep
           </SoftButton>
         )}
@@ -142,6 +142,7 @@ export function CameraStage({ onSave }: CameraStageProps) {
               Keep it
             </SoftButton>
             <SoftButton
+              ghost
               onPress={() => {
                 setRecordedUri(null);
                 setState('idle');

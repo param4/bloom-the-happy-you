@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import type { Todo } from '@/domain/todo';
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 
 interface TodoRowProps {
   todo: Todo;
@@ -14,11 +14,12 @@ interface TodoRowProps {
 
 /** One list item — checkable, optionally deletable. */
 export function TodoRow({ todo, onToggle, onDelete, compact }: TodoRowProps) {
+  const { colors } = useTheme();
   const inner = (
     <>
       <Pressable onPress={onToggle} hitSlop={8} accessibilityLabel={todo.done ? 'Mark not done' : 'Mark done'}>
         {todo.done ? (
-          <CheckCircle2 size={compact ? 22 : 26} color={colors.sage} />
+          <CheckCircle2 size={compact ? 22 : 26} color={colors.accent} />
         ) : (
           <Circle size={compact ? 22 : 26} color={colors.line} />
         )}
@@ -46,6 +47,8 @@ export function TodoRow({ todo, onToggle, onDelete, compact }: TodoRowProps) {
     );
   }
   return (
-    <Card className="flex-row items-center gap-3 rounded-2xl px-4 py-3.5">{inner}</Card>
+    <Card bordered className="flex-row items-center gap-3 rounded-2xl px-4 py-3.5">
+      {inner}
+    </Card>
   );
 }
