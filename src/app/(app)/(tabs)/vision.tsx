@@ -1,0 +1,101 @@
+import { useRouter } from 'expo-router';
+import { Plus, Wand2 } from 'lucide-react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { DreamCard } from '@/components/vision/DreamCard';
+import { ManifestedRow } from '@/components/vision/ManifestedRow';
+import { ReminderRow } from '@/components/vision/ReminderRow';
+import { GradientCard } from '@/components/ui/GradientCard';
+import { Screen } from '@/components/ui/Screen';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { TopBar } from '@/components/ui/TopBar';
+import { haptics } from '@/lib/haptics';
+import { useManifestationsStore } from '@/state/manifestationsStore';
+import { useToastStore } from '@/state/toastStore';
+import { colors } from '@/theme/colors';
+import { gradients } from '@/theme/gradients';
+import { shadows } from '@/theme/shadows';
+
+export default function VisionScreen() {
+  const router = useRouter();
+  const manifestations = useManifestationsStore((s) => s.manifestations);
+  const markAchieved = useManifestationsStore((s) => s.markAchieved);
+  const flash = useToastStore((s) => s.flash);
+
+  const active = manifestations.filter((m) => !m.achieved);
+  const done = manifestations.filter((m) => m.achieved);
+
+  const onAchieved = async (id: string) => {
+    await markAchieved(id);
+    haptics.celebrate();
+    flash('Moved to Manifested ✨');
+  };
+
+  // two-column grid rows: active dreams + the trailing "add" card
+  const cells: (typeof active[number] | 'add')[] = [...active, 'add'];
+  const rows: (typeof cells)[] = [];
+  for (let i = 0; i < cells.length; i += 2) rows.push(cells.slice(i, i + 2));
+
+  return (
+    <Screen padBottom={48}>
+      <TopBar title="Vision Board" tint={colors.lavDeep} />
+      <View className="px-5">
+        <Pressable
+          onPress={() => router.push('/(app)/manifestation-moment')}
+          className="mb-4"
+          style={shadows.soft}
+        >
+          <GradientCard
+            colors={gradients.visionMoment}
+            className="flex-row items-center gap-2.5 rounded-[20px] p-4"
+          >
+            <Wand2 size={22} color="#fff" />
+            <Text className="flex-1 font-display text-[15px] text-white">
+              Take today's manifestation moment
+            </Text>
+          </GradientCard>
+        </Pressable>
+
+        <ReminderRow />
+
+        <SectionLabel>What I'm calling in</SectionLabel>
+        <View className="gap-3">
+          {rows.map((row, i) => (
+            <View key={i} className="flex-row gap-3">
+              {row.map((cell) =>
+                cell === 'add' ? (
+                  <Pressable
+                    key="add"
+                    onPress={() => router.push('/(app)/add-dream')}
+                    className="min-h-[180px] flex-1 items-center justify-center gap-2 rounded-[20px] border-2 border-dashed border-lav"
+                  >
+                    <Plus size={26} color={colors.lavDeep} />
+                    <Text className="font-display text-[13px] text-lav-deep">Add a dream</Text>
+                  </Pressable>
+                ) : (
+                  <DreamCard
+                    key={cell.id}
+                    dream={cell}
+                    onMarkAchieved={() => onAchieved(cell.id)}
+                  />
+                ),
+              )}
+              {row.length === 1 && <View className="flex-1" />}
+            </View>
+          ))}
+        </View>
+
+        {done.length > 0 && (
+          <View className="mt-6">
+            <SectionLabel>Manifested ✨ — dreams now real</SectionLabel>
+            <View className="gap-2.5">
+              {done.map((dream) => (
+                <ManifestedRow key={dream.id} dream={dream} />
+              ))}
+            </View>
+          </View>
+        )}
+      </View>
+    </Screen>
+  );
+}
