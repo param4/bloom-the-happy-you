@@ -70,7 +70,7 @@ export function BrandedVideoModal({ video, onClose }: BrandedVideoModalProps) {
 
               <View className="mt-3 flex-row items-center justify-between">
                 <Text className="font-serif-italic text-[14px] text-ink-soft">
-                  meet the happy you
+                  the happy you
                 </Text>
                 <Text className="font-body-extrabold text-[12px] text-accent-deep">
                   {fmtDay(video.dateKey)}

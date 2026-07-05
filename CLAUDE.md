@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Bloom ("Meet the happy you") is a gentle wellbeing app built with **Expo SDK 54 (pinned)**, TypeScript, Expo Router, and NativeWind. `Draft.jsx` at the repo root is the original **web** React prototype kept only as a visual/behavioral reference — it is not part of the app and is excluded from `tsconfig`. All real code lives under `src/`.
+Bloom ("The happy you") is a gentle wellbeing app built with **Expo SDK 54 (pinned)**, TypeScript, Expo Router, and NativeWind. `Draft.jsx` at the repo root is the original **web** React prototype kept only as a visual/behavioral reference — it is not part of the app and is excluded from `tsconfig`. All real code lives under `src/`.
 
 ## Commands
 

@@ -2,13 +2,13 @@ import { Download, Share2 } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { GradientCard } from '@/components/ui/GradientCard';
 import { OverlayModal } from '@/components/ui/OverlayModal';
 import { SoftButton } from '@/components/ui/SoftButton';
 import { fmtLong, todayKey } from '@/lib/dates';
 import { captureAndShare } from '@/lib/share';
 import { useShareCardStore } from '@/state/shareCardStore';
 import { useTheme } from '@/theme/ThemeProvider';
-import { GradientCard } from '@/components/ui/GradientCard';
 
 /**
  * App-level shareable-image card. The card is a real RN view (no HTML canvas);
@@ -50,7 +50,7 @@ export function ShareCardModal() {
             >
               <Text className="font-serif text-[26px] text-accent-deep">Bloom</Text>
               <Text className="font-serif-italic text-[14px] text-ink-soft">
-                meet the happy you
+                the happy you
               </Text>
               <Text className="mb-4 mt-8 font-body-extrabold text-[13px] uppercase tracking-wide text-accent">
                 {item.label}

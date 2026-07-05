@@ -16,6 +16,14 @@ export class AsyncStorageAffirmationRepository implements IAffirmationRepository
     await this.kv.set(storageKeys.affirmations, [affirmation, ...all]);
   }
 
+  async update(affirmation: Affirmation): Promise<void> {
+    const all = await this.getAll();
+    await this.kv.set(
+      storageKeys.affirmations,
+      all.map((a) => (a.id === affirmation.id ? affirmation : a)),
+    );
+  }
+
   async remove(id: string): Promise<void> {
     const all = await this.getAll();
     await this.kv.set(

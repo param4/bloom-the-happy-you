@@ -57,7 +57,7 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
       <Flower2 size={30} color={colors.accent} />
       <View className="flex-1">
         <Text className="font-serif text-xl leading-6 text-ink">Bloom</Text>
-        <Text className="font-serif-italic text-xs text-ink-soft">Meet the happy you</Text>
+        <Text className="font-serif-italic text-xs text-ink-soft">The happy you</Text>
       </View>
 
       <Pressable onPress={() => setMenuOpen(true)} accessibilityLabel="Your profile">

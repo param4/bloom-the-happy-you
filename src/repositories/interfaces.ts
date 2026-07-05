@@ -64,5 +64,6 @@ export interface ISettingsRepository {
 export interface IAffirmationRepository {
   getAll(): Promise<Affirmation[]>;
   add(affirmation: Affirmation): Promise<void>;
+  update(affirmation: Affirmation): Promise<void>;
   remove(id: string): Promise<void>;
 }

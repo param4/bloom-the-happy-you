@@ -1,4 +1,4 @@
-import { Quote, Share2, Trash2 } from 'lucide-react-native';
+import { Pencil, Quote, Share2, Trash2 } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
@@ -7,6 +7,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 interface AffirmationCardProps {
   text: string;
   onShare?(): void;
+  onEdit?(): void;
   onRemove?(): void;
 }
 
@@ -33,7 +34,7 @@ function MiniButton({
 }
 
 /** One affirmation quote card with optional share/remove actions. */
-export function AffirmationCard({ text, onShare, onRemove }: AffirmationCardProps) {
+export function AffirmationCard({ text, onShare, onEdit, onRemove }: AffirmationCardProps) {
   const { colors } = useTheme();
   return (
     <Card bordered className="rounded-[20px] p-5">
@@ -41,9 +42,10 @@ export function AffirmationCard({ text, onShare, onRemove }: AffirmationCardProp
         <Quote size={22} color={colors.accent} style={{ marginTop: 2 }} />
         <Text className="flex-1 font-serif text-lg leading-7 text-ink">{text}</Text>
       </View>
-      {onShare || onRemove ? (
+      {onShare || onEdit || onRemove ? (
         <View className="mt-3 flex-row gap-2">
           {onShare ? <MiniButton label="Share as card" Icon={Share2} onPress={onShare} /> : null}
+          {onEdit ? <MiniButton label="Edit" Icon={Pencil} onPress={onEdit} /> : null}
           {onRemove ? <MiniButton label="Remove" Icon={Trash2} onPress={onRemove} /> : null}
         </View>
       ) : null}

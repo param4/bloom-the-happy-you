@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Keyboard, Text, TextInput, View } from 'react-native';
 
 import { AffirmationCard } from '@/components/affirmations/AffirmationCard';
 import { CategoryChips } from '@/components/affirmations/CategoryChips';
@@ -20,13 +20,27 @@ export default function AffirmationsScreen() {
   const { colors } = useTheme();
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [draft, setDraft] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
   const mine = useAffirmationsStore((s) => s.affirmations);
 
   const isMine = category === MY_OWN;
 
   const submit = () => {
     if (!draft.trim()) return;
-    useAffirmationsStore.getState().add(draft.trim());
+    if (editingId) useAffirmationsStore.getState().update(editingId, draft.trim());
+    else useAffirmationsStore.getState().add(draft.trim());
+    setDraft('');
+    setEditingId(null);
+    Keyboard.dismiss();
+  };
+
+  const startEdit = (id: string, text: string) => {
+    setEditingId(id);
+    setDraft(text);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
     setDraft('');
   };
 
@@ -49,7 +63,9 @@ export default function AffirmationsScreen() {
         {isMine ? (
           <>
             <Card bordered className="mb-4 rounded-[18px] p-4">
-              <Text className="mb-1 font-serif text-[17px] text-ink">Write your own</Text>
+              <Text className="mb-1 font-serif text-[17px] text-ink">
+                {editingId ? 'Edit affirmation' : 'Write your own'}
+              </Text>
               <Text className="mb-3 font-body text-[13px] text-ink-soft">
                 The words that speak to you. Present tense works best.
               </Text>
@@ -62,9 +78,16 @@ export default function AffirmationsScreen() {
                 className="min-h-[64px] rounded-xl border border-line bg-cream p-3 font-serif text-lg text-ink"
                 textAlignVertical="top"
               />
-              <SoftButton primary onPress={submit} className="mt-2.5 w-full">
-                Add my affirmation
-              </SoftButton>
+              <View className="mt-2.5 flex-row gap-2.5">
+                <SoftButton primary onPress={submit} className="flex-1">
+                  {editingId ? 'Save changes' : 'Add my affirmation'}
+                </SoftButton>
+                {editingId ? (
+                  <SoftButton ghost onPress={cancelEdit}>
+                    Cancel
+                  </SoftButton>
+                ) : null}
+              </View>
             </Card>
 
             {mine.length === 0 ? (
@@ -80,6 +103,7 @@ export default function AffirmationsScreen() {
                         .getState()
                         .open({ kind: 'affirmation', label: 'my affirmation', text: a.text })
                     }
+                    onEdit={() => startEdit(a.id, a.text)}
                     onRemove={() => useAffirmationsStore.getState().remove(a.id)}
                   />
                 ))}

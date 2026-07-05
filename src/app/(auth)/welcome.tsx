@@ -122,7 +122,7 @@ export default function Welcome() {
             </GradientCard>
             <Text className="font-serif text-4xl text-ink">Bloom</Text>
             <Text className="mt-1 font-serif-italic text-base text-ink-soft">
-              Meet the happy you
+              The happy you
             </Text>
           </View>
 
