@@ -15,7 +15,7 @@ interface ManifestationsState {
   manifestations: Manifestation[];
   hydrate(): Promise<void>;
   add(draft: DreamDraft): Promise<void>;
-  markAchieved(id: string): Promise<void>;
+  setAchieved(id: string, achieved: boolean): Promise<void>;
 }
 
 export const createManifestationsStore = (services: AppServices) =>
@@ -33,10 +33,10 @@ export const createManifestationsStore = (services: AppServices) =>
       await services.manifestations.add(manifestation);
       set({ manifestations: [manifestation, ...get().manifestations] });
     },
-    async markAchieved(id) {
+    async setAchieved(id, achieved) {
       const current = get().manifestations.find((m) => m.id === id);
-      if (!current) return;
-      const updated = { ...current, achieved: true };
+      if (!current || current.achieved === achieved) return;
+      const updated = { ...current, achieved };
       await services.manifestations.update(updated);
       set({
         manifestations: get().manifestations.map((m) => (m.id === id ? updated : m)),

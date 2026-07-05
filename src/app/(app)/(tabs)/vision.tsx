@@ -19,16 +19,22 @@ export default function VisionScreen() {
   const router = useRouter();
   const { colors, gradients } = useTheme();
   const manifestations = useManifestationsStore((s) => s.manifestations);
-  const markAchieved = useManifestationsStore((s) => s.markAchieved);
+  const setAchieved = useManifestationsStore((s) => s.setAchieved);
   const flash = useToastStore((s) => s.flash);
 
   const active = manifestations.filter((m) => !m.achieved);
   const done = manifestations.filter((m) => m.achieved);
 
   const onAchieved = async (id: string) => {
-    await markAchieved(id);
+    await setAchieved(id, true);
     haptics.celebrate();
     flash('Moved to Manifested ✨');
+  };
+
+  const onUndo = async (id: string) => {
+    await setAchieved(id, false);
+    haptics.select();
+    flash('Back to what you’re calling in');
   };
 
   // two-column grid rows: active dreams + the trailing "add" card
@@ -92,7 +98,7 @@ export default function VisionScreen() {
             <SectionLabel>Manifested ✨ — dreams now real</SectionLabel>
             <View className="gap-2.5">
               {done.map((dream) => (
-                <ManifestedRow key={dream.id} dream={dream} />
+                <ManifestedRow key={dream.id} dream={dream} onUndo={() => onUndo(dream.id)} />
               ))}
             </View>
           </View>

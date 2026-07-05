@@ -1,12 +1,12 @@
-import { Star } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { Star, Undo2 } from 'lucide-react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { GradientCard } from '@/components/ui/GradientCard';
 import type { Manifestation } from '@/domain/manifestation';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /** A dream that came true. */
-export function ManifestedRow({ dream }: { dream: Manifestation }) {
+export function ManifestedRow({ dream, onUndo }: { dream: Manifestation; onUndo(): void }) {
   const { colors, gradients } = useTheme();
   return (
     <GradientCard
@@ -25,6 +25,15 @@ export function ManifestedRow({ dream }: { dream: Manifestation }) {
         <Text className="font-serif text-base text-ink">{dream.title}</Text>
         <Text className="font-body text-xs text-ink-soft">I dreamed this — and here it is.</Text>
       </View>
+      <Pressable
+        onPress={onUndo}
+        hitSlop={8}
+        accessibilityLabel="Move back to active dreams"
+        className="h-9 w-9 items-center justify-center rounded-full"
+        style={{ backgroundColor: `${colors.sun}44` }}
+      >
+        <Undo2 size={18} color={colors.accentDeep} />
+      </Pressable>
     </GradientCard>
   );
 }
