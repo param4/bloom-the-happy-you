@@ -11,5 +11,4 @@ export const storageKeys = {
   profile: `${PREFIX}/profile`,
   moods: `${PREFIX}/moods`,
   settings: `${PREFIX}/settings`,
-  seeded: `${PREFIX}/seeded`,
 } as const;

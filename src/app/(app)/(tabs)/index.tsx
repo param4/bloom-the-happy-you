@@ -14,9 +14,11 @@ import type { EntryKind } from '@/domain/entry';
 import { LOW_MOODS, type MoodKey } from '@/domain/mood';
 import { useGreeting } from '@/hooks/useGreeting';
 import { haptics } from '@/lib/haptics';
+import { resetContentData } from '@/state/hydration';
 import { useMoodStore } from '@/state/moodStore';
 import { useProfileStore } from '@/state/profileStore';
 import { useStreakStore } from '@/state/streakStore';
+import { useToastStore } from '@/state/toastStore';
 import { useTodosStore } from '@/state/todosStore';
 import { colors } from '@/theme/colors';
 
@@ -25,7 +27,7 @@ export default function HomeScreen() {
   const greeting = useGreeting();
 
   const profile = useProfileStore((s) => s.profile);
-  const signOut = useProfileStore((s) => s.signOut);
+  const flash = useToastStore((s) => s.flash);
   const streak = useStreakStore((s) => s.streak);
   const todos = useTodosStore((s) => s.todos);
   const toggleTodo = useTodosStore((s) => s.toggle);
@@ -53,10 +55,16 @@ export default function HomeScreen() {
   const openPillar = (kind: EntryKind) =>
     router.push({ pathname: '/(app)/pillar/[kind]', params: { kind } });
 
+  const onClearData = async () => {
+    await resetContentData();
+    haptics.select();
+    flash('Your space is clear — a fresh start.');
+  };
+
   return (
     <Screen padBottom={48}>
       <View className="px-5 pt-3">
-        <GreetingHeader profile={profile} onSignOut={signOut} />
+        <GreetingHeader profile={profile} onClearData={onClearData} />
 
         <Text className="mb-1 mt-5 font-display text-[27px] text-ink">
           {greeting}, {firstName}.

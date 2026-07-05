@@ -14,10 +14,11 @@ import type {
   ITodoRepository,
   IVideoRepository,
 } from '@/repositories/interfaces';
-import { seedIfFirstRun } from '@/repositories/seed';
 import { AsyncStorageKvStore, type IKeyValueStore } from '@/repositories/storage/kvStore';
 
+import { DataResetService } from './DataResetService';
 import type {
+  IDataResetService,
   IMediaStore,
   IMomentService,
   INotificationService,
@@ -55,8 +56,7 @@ export interface AppServices {
   moment: IMomentService;
   media: IMediaStore;
   notifications: INotificationService;
-  /** Seeds prototype data on first run. */
-  seed(): Promise<void>;
+  dataReset: IDataResetService;
 }
 
 export function createContainer(overrides: Partial<AppServices> = {}): AppServices {
@@ -85,9 +85,7 @@ export function createContainer(overrides: Partial<AppServices> = {}): AppServic
     moment: overrides.moment ?? new MomentService(manifestations, randomPicker),
     media: overrides.media ?? new MediaStore(),
     notifications: overrides.notifications ?? new NotificationService(),
-    seed:
-      overrides.seed ??
-      (() => seedIfFirstRun(kv, { entries, todos, manifestations, videos, settings })),
+    dataReset: overrides.dataReset ?? new DataResetService(kv),
   };
 }
 

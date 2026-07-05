@@ -50,6 +50,11 @@ export interface IMediaStore {
   remove(uri: string): Promise<void>;
 }
 
+/** Owns wiping all stored user content (leaves the profile intact). */
+export interface IDataResetService {
+  clearAll(): Promise<void>;
+}
+
 /** Owns local notifications for the daily vision reminder. */
 export interface INotificationService {
   requestPermission(): Promise<boolean>;

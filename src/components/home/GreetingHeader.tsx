@@ -1,6 +1,6 @@
-import { Flower2, LogOut } from 'lucide-react-native';
+import { Flower2, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Alert, Modal, Pressable, Text, View } from 'react-native';
 
 import { GradientCard } from '@/components/ui/GradientCard';
 import type { Profile } from '@/domain/profile';
@@ -10,13 +10,25 @@ import { shadows } from '@/theme/shadows';
 
 interface GreetingHeaderProps {
   profile: Profile;
-  onSignOut(): void;
+  onClearData(): void;
 }
 
-/** Bloom wordmark + avatar with the sign-out popover. */
-export function GreetingHeader({ profile, onSignOut }: GreetingHeaderProps) {
+/** Bloom wordmark + avatar with the clear-data popover. */
+export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = (profile.name || 'friend').split(' ')[0];
+
+  const confirmClear = () => {
+    setMenuOpen(false);
+    Alert.alert(
+      'Clear all data?',
+      'This permanently removes your journals, todos, vision board, booth moments and streak. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Clear data', style: 'destructive', onPress: onClearData },
+      ],
+    );
+  };
 
   return (
     <View className="flex-row items-center gap-2.5">
@@ -50,14 +62,11 @@ export function GreetingHeader({ profile, onSignOut }: GreetingHeaderProps) {
               {profile.email || 'Exploring as a guest'}
             </Text>
             <Pressable
-              onPress={() => {
-                setMenuOpen(false);
-                onSignOut();
-              }}
-              className="flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
+              onPress={confirmClear}
+              className="flex-row items-center justify-center gap-2 rounded-xl border border-peach bg-cream py-2"
             >
-              <LogOut size={16} color={colors.ink} />
-              <Text className="font-display text-[13px] text-ink">Sign out</Text>
+              <Trash2 size={16} color={colors.peachDeep} />
+              <Text className="font-display text-[13px] text-peach-deep">Clear data</Text>
             </Pressable>
           </View>
         </Pressable>
