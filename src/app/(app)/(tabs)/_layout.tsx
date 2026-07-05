@@ -1,4 +1,10 @@
-import { Tabs } from 'expo-router';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import type {
+  MaterialTopTabNavigationEventMap,
+  MaterialTopTabNavigationOptions,
+} from '@react-navigation/material-top-tabs';
+import type { ParamListBase, TabNavigationState } from '@react-navigation/native';
+import { withLayoutContext } from 'expo-router';
 import {
   Home as HomeIcon,
   ListChecks,
@@ -6,61 +12,88 @@ import {
   Sparkles,
   Video,
 } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '@/theme/colors';
 import { fonts } from '@/theme/fonts';
 
-/** The five-tab bottom navigation from the prototype. */
+/**
+ * Material top-tabs navigator (pager-backed, so screens swipe horizontally),
+ * pinned to the bottom and styled to look like the prototype's bottom bar.
+ * Swiping moves between adjacent tabs (Home ⇄ Today ⇄ Vision ⇄ Booth ⇄ Affirm).
+ */
+const { Navigator } = createMaterialTopTabNavigator();
+
+const MaterialTopTabs = withLayoutContext<
+  MaterialTopTabNavigationOptions,
+  typeof Navigator,
+  TabNavigationState<ParamListBase>,
+  MaterialTopTabNavigationEventMap
+>(Navigator);
+
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
   return (
-    <Tabs
+    <MaterialTopTabs
+      tabBarPosition="bottom"
       screenOptions={{
-        headerShown: false,
-        sceneStyle: { backgroundColor: colors.cream },
+        swipeEnabled: true,
         tabBarActiveTintColor: colors.peachDeep,
         tabBarInactiveTintColor: colors.inkSoft,
+        tabBarShowIcon: true,
+        tabBarIndicatorStyle: { height: 0 },
         tabBarStyle: {
           backgroundColor: 'rgba(255,255,255,0.92)',
           borderTopColor: colors.line,
+          borderTopWidth: 1,
+          paddingBottom: insets.bottom,
+          elevation: 0,
+          shadowOpacity: 0,
         },
-        tabBarLabelStyle: { fontFamily: fonts.display, fontSize: 11 },
+        tabBarLabelStyle: {
+          fontFamily: fonts.display,
+          fontSize: 11,
+          textTransform: 'none',
+          marginTop: 2,
+        },
+        tabBarItemStyle: { flexDirection: 'column', paddingVertical: 4 },
       }}
     >
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => <HomeIcon size={size} color={color} />,
+          tabBarIcon: ({ color }) => <HomeIcon size={22} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="today"
         options={{
           title: 'Today',
-          tabBarIcon: ({ color, size }) => <ListChecks size={size} color={color} />,
+          tabBarIcon: ({ color }) => <ListChecks size={22} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="vision"
         options={{
           title: 'Vision',
-          tabBarIcon: ({ color, size }) => <Sparkles size={size} color={color} />,
+          tabBarIcon: ({ color }) => <Sparkles size={22} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="booth"
         options={{
           title: 'Booth',
-          tabBarIcon: ({ color, size }) => <Video size={size} color={color} />,
+          tabBarIcon: ({ color }) => <Video size={22} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="affirmations"
         options={{
           title: 'Affirm',
-          tabBarIcon: ({ color, size }) => <Quote size={size} color={color} />,
+          tabBarIcon: ({ color }) => <Quote size={22} color={color} />,
         }}
       />
-    </Tabs>
+    </MaterialTopTabs>
   );
 }
