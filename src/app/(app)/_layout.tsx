@@ -4,12 +4,14 @@ import { useProfileStore } from '@/state/profileStore';
 import { colors } from '@/theme/colors';
 
 /**
- * AUTH GATE — no profile means straight back to welcome (covers deep links
- * and sign-out automatically). Declares the app's modal routes.
+ * AUTH GATE — no profile means bounce to the entry route (covers deep links
+ * and sign-out automatically). While login is hidden, `index` re-provisions a
+ * guest there; when login is restored, `index` forwards to welcome. Declares
+ * the app's modal routes.
  */
 export default function AppLayout() {
   const profile = useProfileStore((s) => s.profile);
-  if (!profile) return <Redirect href="/(auth)/welcome" />;
+  if (!profile) return <Redirect href="/" />;
 
   return (
     <Stack
