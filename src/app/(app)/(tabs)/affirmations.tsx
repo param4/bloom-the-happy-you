@@ -14,7 +14,7 @@ import { useShareCardStore } from '@/state/shareCardStore';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const MY_OWN = 'My own';
-const CATEGORIES = [...Object.keys(AFFIRMATIONS), MY_OWN];
+const CATEGORIES = [MY_OWN, ...Object.keys(AFFIRMATIONS)];
 
 export default function AffirmationsScreen() {
   const { colors } = useTheme();

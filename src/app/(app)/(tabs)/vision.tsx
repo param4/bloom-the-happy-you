@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Plus, Wand2 } from 'lucide-react-native';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import { DreamCard } from '@/components/vision/DreamCard';
 import { ManifestedRow } from '@/components/vision/ManifestedRow';
@@ -20,6 +20,7 @@ export default function VisionScreen() {
   const { colors, gradients } = useTheme();
   const manifestations = useManifestationsStore((s) => s.manifestations);
   const setAchieved = useManifestationsStore((s) => s.setAchieved);
+  const remove = useManifestationsStore((s) => s.remove);
   const flash = useToastStore((s) => s.flash);
 
   const active = manifestations.filter((m) => !m.achieved);
@@ -35,6 +36,20 @@ export default function VisionScreen() {
     await setAchieved(id, false);
     haptics.select();
     flash('Back to what you’re calling in');
+  };
+
+  const onDelete = (id: string, title: string) => {
+    Alert.alert('Delete this dream?', `"${title}" will be removed from your vision board. This cannot be undone.`, [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Yes, delete',
+        style: 'destructive',
+        onPress: async () => {
+          await remove(id);
+          flash('Dream removed');
+        },
+      },
+    ]);
   };
 
   // two-column grid rows: active dreams + the trailing "add" card
@@ -88,6 +103,7 @@ export default function VisionScreen() {
                     onEdit={() =>
                       router.push({ pathname: '/(app)/add-dream', params: { id: cell.id } })
                     }
+                    onDelete={() => onDelete(cell.id, cell.title)}
                   />
                 ),
               )}

@@ -1,4 +1,4 @@
-import { Check, Pencil, Sparkles } from 'lucide-react-native';
+import { Check, Pencil, Sparkles, Trash2 } from 'lucide-react-native';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
@@ -10,10 +10,11 @@ interface DreamCardProps {
   dream: Manifestation;
   onMarkAchieved(): void;
   onEdit(): void;
+  onDelete(): void;
 }
 
 /** One active vision-board dream. */
-export function DreamCard({ dream, onMarkAchieved, onEdit }: DreamCardProps) {
+export function DreamCard({ dream, onMarkAchieved, onEdit, onDelete }: DreamCardProps) {
   const { colors, gradients } = useTheme();
   return (
     <Card bordered className="flex-1 overflow-hidden rounded-[20px]">
@@ -46,6 +47,13 @@ export function DreamCard({ dream, onMarkAchieved, onEdit }: DreamCardProps) {
         >
           <Check size={14} color={colors.accentDeep} />
           <Text className="font-body-extrabold text-xs text-accent-deep">It came true</Text>
+        </Pressable>
+        <Pressable
+          onPress={onDelete}
+          className="mt-1.5 flex-row items-center justify-center gap-1.5 py-[6px]"
+        >
+          <Trash2 size={13} color={colors.inkSoft} />
+          <Text className="font-body-extrabold text-xs text-ink-soft">Delete</Text>
         </Pressable>
       </View>
     </Card>
