@@ -23,4 +23,12 @@ export class AsyncStorageManifestationRepository implements IManifestationReposi
       all.map((m) => (m.id === manifestation.id ? manifestation : m)),
     );
   }
+
+  async remove(id: string): Promise<void> {
+    const all = await this.getAll();
+    await this.kv.set(
+      storageKeys.manifestations,
+      all.filter((m) => m.id !== id),
+    );
+  }
 }

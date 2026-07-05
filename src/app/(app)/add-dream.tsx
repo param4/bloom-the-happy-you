@@ -1,8 +1,9 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
-import { Camera } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Camera, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -26,12 +27,18 @@ export default function AddDreamScreen() {
   const { colors } = useTheme();
   const { media } = useServices();
   const add = useManifestationsStore((s) => s.add);
+  const update = useManifestationsStore((s) => s.update);
+  const remove = useManifestationsStore((s) => s.remove);
   const flash = useToastStore((s) => s.flash);
 
-  const [title, setTitle] = useState('');
-  const [affirmation, setAffirmation] = useState('');
-  const [why, setWhy] = useState('');
-  const [imageUri, setImageUri] = useState<string | undefined>();
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const existing = useManifestationsStore((s) => s.manifestations.find((m) => m.id === id));
+  const isEdit = !!existing;
+
+  const [title, setTitle] = useState(existing?.title ?? '');
+  const [affirmation, setAffirmation] = useState(existing?.affirmation ?? '');
+  const [why, setWhy] = useState(existing?.why ?? '');
+  const [imageUri, setImageUri] = useState<string | undefined>(existing?.imageUri);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -45,17 +52,40 @@ export default function AddDreamScreen() {
 
   const save = async () => {
     if (!title.trim() || !affirmation.trim()) return;
-    // Picker URIs are volatile cache files — persist before storing.
-    const durableUri = imageUri ? await media.persistImage(imageUri) : undefined;
-    await add({
+    // Persist only a freshly picked (volatile cache) URI; keep an unchanged
+    // durable one as-is, and treat a cleared image as removed.
+    const durableUri =
+      imageUri && imageUri !== existing?.imageUri
+        ? await media.persistImage(imageUri)
+        : imageUri;
+    const draft = {
       title: title.trim(),
       affirmation: affirmation.trim(),
       why: why.trim(),
       imageUri: durableUri,
-    });
+    };
+    if (isEdit) await update(existing.id, draft);
+    else await add(draft);
     haptics.success();
-    flash('Added to your vision board ✨');
+    flash(isEdit ? 'Dream updated ✨' : 'Added to your vision board ✨');
     router.back();
+  };
+
+  const confirmDelete = () => {
+    if (!existing) return;
+    Alert.alert('Delete this dream?', 'It will be removed from your vision board. This cannot be undone.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await remove(existing.id);
+          haptics.success();
+          flash('Dream removed');
+          router.back();
+        },
+      },
+    ]);
   };
 
   return (
@@ -63,7 +93,7 @@ export default function AddDreamScreen() {
       className="flex-1 bg-cream"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <TopBar title="Add a dream" />
+      <TopBar title={isEdit ? 'Edit dream' : 'Add a dream'} />
       <ScrollView contentContainerClassName="px-5 pb-10" keyboardShouldPersistTaps="handled">
         <Text className="mb-3 font-body text-[13px] text-ink-soft">
           Write your affirmation as if it's already true.
@@ -105,10 +135,20 @@ export default function AddDreamScreen() {
 
         <View className="mt-2 flex-row gap-2.5">
           <SoftButton primary onPress={save} className="flex-1">
-            Add it
+            {isEdit ? 'Save changes' : 'Add it'}
           </SoftButton>
           <SoftButton ghost onPress={() => router.back()}>Cancel</SoftButton>
         </View>
+
+        {isEdit && (
+          <Pressable
+            onPress={confirmDelete}
+            className="mt-3 flex-row items-center justify-center gap-2 py-2"
+          >
+            <Trash2 size={16} color={colors.accentDeep} />
+            <Text className="font-body-extrabold text-[13px] text-accent-deep">Delete dream</Text>
+          </Pressable>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );

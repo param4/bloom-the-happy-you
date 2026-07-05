@@ -85,6 +85,9 @@ export default function VisionScreen() {
                     key={cell.id}
                     dream={cell}
                     onMarkAchieved={() => onAchieved(cell.id)}
+                    onEdit={() =>
+                      router.push({ pathname: '/(app)/add-dream', params: { id: cell.id } })
+                    }
                   />
                 ),
               )}

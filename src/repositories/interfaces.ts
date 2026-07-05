@@ -34,6 +34,7 @@ export interface IManifestationRepository {
   getAll(): Promise<Manifestation[]>;
   add(manifestation: Manifestation): Promise<void>;
   update(manifestation: Manifestation): Promise<void>;
+  remove(id: string): Promise<void>;
 }
 
 export interface IVideoRepository {
