@@ -1,10 +1,12 @@
-import { Flower2, Trash2 } from 'lucide-react-native';
+import { useClerk } from '@clerk/clerk-expo';
+import { Flower2, LogOut, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert, Modal, Pressable, Text, View } from 'react-native';
+import { Alert, Image, Modal, Pressable, Text, View } from 'react-native';
 
 import { GradientCard } from '@/components/ui/GradientCard';
 import type { Profile } from '@/domain/profile';
 import type { ThemeKey } from '@/domain/theme';
+import { useProfileStore } from '@/state/profileStore';
 import { useThemeStore } from '@/state/themeStore';
 import { useTheme } from '@/theme/ThemeProvider';
 import { shadows } from '@/theme/shadows';
@@ -28,6 +30,15 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
 
   const themeKey = useThemeStore((s) => s.themeKey);
   const setTheme = useThemeStore((s) => s.setTheme);
+  const { signOut: clerkSignOut } = useClerk();
+
+  // Guests have no Clerk account (no id); sign them out locally. Clerk-backed
+  // accounts sign out of Clerk, and ClerkProfileSync clears the local profile.
+  const signOut = () => {
+    setMenuOpen(false);
+    if (profile.id) void clerkSignOut();
+    else void useProfileStore.getState().signOut();
+  };
 
   const confirmClear = () => {
     setMenuOpen(false);
@@ -50,15 +61,23 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
       </View>
 
       <Pressable onPress={() => setMenuOpen(true)} accessibilityLabel="Your profile">
-        <GradientCard
-          colors={gradients.accentSun}
-          className="h-[42px] w-[42px] items-center justify-center rounded-full"
-          style={shadows.softer}
-        >
-          <Text className="font-serif text-[17px] text-white">
-            {firstName[0]?.toUpperCase()}
-          </Text>
-        </GradientCard>
+        {profile.avatarUrl ? (
+          <Image
+            source={{ uri: profile.avatarUrl }}
+            className="h-[42px] w-[42px] rounded-full"
+            style={shadows.softer}
+          />
+        ) : (
+          <GradientCard
+            colors={gradients.accentSun}
+            className="h-[42px] w-[42px] items-center justify-center rounded-full"
+            style={shadows.softer}
+          >
+            <Text className="font-serif text-[17px] text-white">
+              {firstName[0]?.toUpperCase()}
+            </Text>
+          </GradientCard>
+        )}
       </Pressable>
 
       {/* profile popover — full-screen scrim dismisses */}
@@ -97,10 +116,20 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
 
             <Pressable
               onPress={confirmClear}
-              className="flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
+              className="mb-2 flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
             >
               <Trash2 size={16} color={colors.accentDeep} />
               <Text className="font-body-extrabold text-[13px] text-accent-deep">Clear data</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={signOut}
+              className="flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
+            >
+              <LogOut size={16} color={colors.ink} />
+              <Text className="font-body-extrabold text-[13px] text-ink">
+                {profile.id ? 'Sign out' : 'Leave guest mode'}
+              </Text>
             </Pressable>
           </View>
         </Pressable>

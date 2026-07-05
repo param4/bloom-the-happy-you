@@ -15,16 +15,19 @@ import {
   Nunito_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/nunito';
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type PropsWithChildren } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ShareCardModal } from '@/components/share/ShareCardModal';
 import { BloomBurst } from '@/components/ui/BloomBurst';
 import { ToastHost } from '@/components/ui/Toast';
+import { ClerkProfileSync } from '@/providers/ClerkProfileSync';
 import { ServicesProvider } from '@/providers/ServicesProvider';
 import { hydrateAll } from '@/state/hydration';
 import { useThemeStore } from '@/state/themeStore';
@@ -56,34 +59,53 @@ export default function RootLayout() {
     hydrateAll().finally(() => setHydrated(true));
   }, []);
 
-  const ready = fontsLoaded && hydrated;
+  return (
+    <ClerkProvider
+      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      tokenCache={tokenCache}
+    >
+      <GestureHandlerRootView className="flex-1">
+        <SafeAreaProvider>
+          <ServicesProvider>
+            <ThemeProvider themeKey={themeKey} onChangeTheme={onChangeTheme}>
+              <SplashGate fontsLoaded={fontsLoaded} hydrated={hydrated}>
+                <StatusBar style="dark" backgroundColor={colors.cream} />
+                <ClerkProfileSync />
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: colors.cream },
+                  }}
+                />
+                <ShareCardModal />
+                <ToastHost />
+                <BloomBurst />
+              </SplashGate>
+            </ThemeProvider>
+          </ServicesProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ClerkProvider>
+  );
+}
+
+/**
+ * Holds the splash screen until fonts, local stores, AND Clerk's session have
+ * all loaded, so no auth gate ever evaluates against half-restored state.
+ * Lives inside ClerkProvider so it can read `useAuth().isLoaded`.
+ */
+function SplashGate({
+  fontsLoaded,
+  hydrated,
+  children,
+}: PropsWithChildren<{ fontsLoaded: boolean; hydrated: boolean }>) {
+  const { isLoaded: clerkLoaded } = useAuth();
+  const ready = fontsLoaded && hydrated && clerkLoaded;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
   }, [ready]);
 
-  // Hold the splash screen until fonts + stores are ready so the auth
-  // gate never sees a half-hydrated state.
   if (!ready) return null;
-
-  return (
-    <GestureHandlerRootView className="flex-1">
-      <SafeAreaProvider>
-        <ServicesProvider>
-          <ThemeProvider themeKey={themeKey} onChangeTheme={onChangeTheme}>
-            <StatusBar style="dark" backgroundColor={colors.cream} />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: colors.cream },
-              }}
-            />
-            <ShareCardModal />
-            <ToastHost />
-            <BloomBurst />
-          </ThemeProvider>
-        </ServicesProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
-  );
+  return <>{children}</>;
 }
