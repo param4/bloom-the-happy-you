@@ -1,4 +1,4 @@
-import { Download, Share2 } from 'lucide-react-native';
+import { Download } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -34,7 +34,18 @@ export function ShareCardModal() {
   };
 
   return (
-    <OverlayModal visible={!!item} onClose={close}>
+    <OverlayModal
+      visible={!!item}
+      onClose={close}
+      footer={
+        <SoftButton primary raw onPress={save} disabled={busy} className="w-full">
+          <Download size={16} color="#fff" />
+          <Text className="font-body-extrabold text-[15px] text-white">
+            {busy ? 'Preparing…' : 'Save / Share'}
+          </Text>
+        </SoftButton>
+      }
+    >
       <Text className="mb-1 font-serif text-[22px] text-ink">A card to share</Text>
       <Text className="mb-3 font-body text-[13px] text-ink-soft">
         Lovely on a Story — or just for you.
@@ -64,19 +75,6 @@ export function ShareCardModal() {
             </View>
           </GradientCard>
         </View>
-      </View>
-
-      <View className="mt-4 flex-row gap-2.5">
-        <SoftButton primary raw onPress={save} disabled={busy} className="flex-1">
-          <Download size={16} color="#fff" />
-          <Text className="font-body-extrabold text-[15px] text-white">
-            {busy ? 'Preparing…' : 'Save / Share'}
-          </Text>
-        </SoftButton>
-        <SoftButton ghost raw onPress={close}>
-          <Share2 size={16} color={colors.ink} />
-          <Text className="font-body-extrabold text-[15px] text-ink">Close</Text>
-        </SoftButton>
       </View>
     </OverlayModal>
   );

@@ -79,7 +79,22 @@ export function SendModal({ entry, visible, onClose }: SendModalProps) {
   };
 
   return (
-    <OverlayModal visible={visible} onClose={onClose} tall>
+    <OverlayModal
+      visible={visible}
+      onClose={onClose}
+      tall
+      footer={
+        <View className="flex-row gap-2.5">
+          <SoftButton primary onPress={() => finish('Sent with love 💛')} className="flex-1" raw>
+            <Send size={16} color="#fff" />
+            <Text className="font-body-extrabold text-[15px] text-white">Share</Text>
+          </SoftButton>
+          <SoftButton ghost onPress={() => finish('Copied — go make their day.')}>
+            Copy
+          </SoftButton>
+        </View>
+      }
+    >
       <Text className="font-serif text-[22px] text-ink">Send your appreciation</Text>
       <Text className="mt-1 font-body text-[13px] text-ink-soft">
         Told, not just logged. This is the quietly powerful part.
@@ -132,16 +147,6 @@ export function SendModal({ entry, visible, onClose }: SendModalProps) {
           placeholderTextColor={colors.inkSoft}
           className="min-h-[130px] font-serif text-[16px] leading-[24px] text-ink"
         />
-      </View>
-
-      <View className="mt-4 flex-row gap-2.5">
-        <SoftButton primary onPress={() => finish('Sent with love 💛')} className="flex-1" raw>
-          <Send size={16} color="#fff" />
-          <Text className="font-body-extrabold text-[15px] text-white">Share</Text>
-        </SoftButton>
-        <SoftButton ghost onPress={() => finish('Copied — go make their day.')}>
-          Copy
-        </SoftButton>
       </View>
     </OverlayModal>
   );
