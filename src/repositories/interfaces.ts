@@ -20,6 +20,7 @@ import type { DateKey } from '@/lib/dates';
 export interface IEntryRepository {
   getAll(kind: EntryKind): Promise<Entry[]>;
   add(kind: EntryKind, entry: Entry): Promise<void>;
+  update(kind: EntryKind, entry: Entry): Promise<void>;
   remove(kind: EntryKind, id: string): Promise<void>;
 }
 

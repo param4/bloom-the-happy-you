@@ -19,6 +19,8 @@ interface EntriesState {
   appreciation: Entry[];
   hydrate(): Promise<void>;
   addEntry(kind: EntryKind, draft: EntryDraft): Promise<void>;
+  editEntry(kind: EntryKind, id: string, patch: Partial<EntryDraft>): Promise<void>;
+  removeEntry(kind: EntryKind, id: string): Promise<void>;
 }
 
 export const createEntriesStore = (services: AppServices) =>
@@ -44,6 +46,20 @@ export const createEntriesStore = (services: AppServices) =>
       // Journaling counts as showing up — the streak advances at most
       // once per day (StreakService owns that rule).
       await useStreakStore.getState().recordToday();
+    },
+    async editEntry(kind, id, patch) {
+      const current = get()[kind].find((e) => e.id === id);
+      if (!current) return;
+      const updated = { ...current, ...patch };
+      await services.entries.update(kind, updated);
+      set({ [kind]: get()[kind].map((e) => (e.id === id ? updated : e)) } as Pick<
+        EntriesState,
+        EntryKind
+      >);
+    },
+    async removeEntry(kind, id) {
+      await services.entries.remove(kind, id);
+      set({ [kind]: get()[kind].filter((e) => e.id !== id) } as Pick<EntriesState, EntryKind>);
     },
   }));
 

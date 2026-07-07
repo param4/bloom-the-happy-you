@@ -1,7 +1,7 @@
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { Mic, PenLine, Send, Video } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 
 import { CameraStage } from '@/components/booth/CameraStage';
 import { ArchiveBrowser } from '@/components/pillar/ArchiveBrowser';
@@ -39,6 +39,8 @@ export default function PillarScreen() {
     isEntryKind(kind) ? s[kind] : s.gratitude,
   );
   const addEntry = useEntriesStore((s) => s.addEntry);
+  const editEntry = useEntriesStore((s) => s.editEntry);
+  const removeEntry = useEntriesStore((s) => s.removeEntry);
   const flash = useToastStore((s) => s.flash);
   const { recent, years } = useArchive(entries);
 
@@ -87,6 +89,19 @@ export default function PillarScreen() {
       text: e.content,
       dateKey: e.dateKey,
     });
+
+  const confirmDelete = (entry: Entry) =>
+    Alert.alert('Delete this reflection?', 'This cannot be undone.', [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Yes, delete',
+        style: 'destructive',
+        onPress: async () => {
+          await removeEntry(kind, entry.id);
+          flash('Removed');
+        },
+      },
+    ]);
 
   return (
     <Screen>
@@ -164,6 +179,12 @@ export default function PillarScreen() {
                     ? () => setSendEntry(entry)
                     : undefined
                 }
+                onEdit={
+                  entry.type === 'text'
+                    ? (content) => editEntry(kind, entry.id, { content })
+                    : undefined
+                }
+                onDelete={() => confirmDelete(entry)}
               />
             ))}
           </View>

@@ -2,9 +2,9 @@ import { useEvent } from 'expo';
 import { setAudioModeAsync, useAudioPlayer } from 'expo-audio';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { Pause, Play, Quote, Mic, Send, Share2, X } from 'lucide-react-native';
+import { Check, Pause, Pencil, Play, Quote, Mic, Send, Share2, Trash2, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/ui/Card';
@@ -16,6 +16,10 @@ interface EntryCardProps {
   e: Entry;
   onShare?: () => void;
   onSend?: () => void;
+  /** Save edited text content (text entries only). */
+  onEdit?: (content: string) => void;
+  /** Delete this entry (parent confirms). */
+  onDelete?: () => void;
 }
 
 /** mm:ss for the video scrubber's elapsed/duration labels. */
@@ -27,12 +31,27 @@ function formatDuration(totalSeconds: number) {
 }
 
 /** One saved reflection — text, voice, or video — with gentle action buttons. */
-export function EntryCard({ e, onShare, onSend }: EntryCardProps) {
+export function EntryCard({ e, onShare, onSend, onEdit, onDelete }: EntryCardProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [playing, setPlaying] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
   const [trackWidth, setTrackWidth] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(e.content);
+
+  const canEdit = e.type === 'text' && !!onEdit;
+
+  const startEdit = () => {
+    setDraft(e.content);
+    setEditing(true);
+  };
+
+  const saveEdit = () => {
+    const next = draft.trim();
+    if (next && next !== e.content) onEdit?.(next);
+    setEditing(false);
+  };
   const player = useAudioPlayer(e.audioUri ?? undefined);
   const videoPlayer = useVideoPlayer(e.videoUri ?? null, (p) => {
     p.timeUpdateEventInterval = 0.25;
@@ -154,15 +173,35 @@ export function EntryCard({ e, onShare, onSend }: EntryCardProps) {
           </View>
         )}
         <View className="flex-1">
-          <Text className="font-serif text-[17px] leading-[26px] text-ink">{body}</Text>
+          {editing ? (
+            <TextInput
+              value={draft}
+              onChangeText={setDraft}
+              multiline
+              autoFocus
+              textAlignVertical="top"
+              placeholderTextColor={colors.inkSoft}
+              className="rounded-xl border border-line bg-cream px-3 py-2 font-serif text-[17px] leading-[26px] text-ink"
+            />
+          ) : (
+            <Text className="font-serif text-[17px] leading-[26px] text-ink">{body}</Text>
+          )}
           <Text className="mt-1 font-body-extrabold text-xs text-ink-soft">
             {fmtDay(e.dateKey)}
           </Text>
         </View>
       </View>
 
-      {(e.type === 'voice' && e.audioUri) || (e.type === 'text' && (onShare || onSend)) ? (
+      {editing ? (
         <View className="mt-3 flex-row gap-2">
+          <MiniButton onPress={saveEdit} Icon={Check} label="Save" color={colors.accentDeep} />
+          <MiniButton onPress={() => setEditing(false)} Icon={X} label="Cancel" color={colors.inkSoft} />
+        </View>
+      ) : (e.type === 'voice' && e.audioUri) ||
+        (e.type === 'text' && (onShare || onSend)) ||
+        canEdit ||
+        onDelete ? (
+        <View className="mt-3 flex-row flex-wrap gap-2">
           {e.type === 'voice' && e.audioUri ? (
             <MiniButton
               onPress={togglePlay}
@@ -176,6 +215,12 @@ export function EntryCard({ e, onShare, onSend }: EntryCardProps) {
           ) : null}
           {e.type === 'text' && onSend ? (
             <MiniButton onPress={onSend} Icon={Send} label="Send it" color={colors.inkSoft} />
+          ) : null}
+          {canEdit ? (
+            <MiniButton onPress={startEdit} Icon={Pencil} label="Edit" color={colors.inkSoft} />
+          ) : null}
+          {onDelete ? (
+            <MiniButton onPress={onDelete} Icon={Trash2} label="Delete" color={colors.inkSoft} />
           ) : null}
         </View>
       ) : null}

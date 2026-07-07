@@ -1,13 +1,15 @@
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import type { EntryKind } from '@/domain/entry';
 import type { Entry } from '@/domain/entry';
 import type { ArchiveGroups } from '@/hooks/useArchive';
 import { MONTHS } from '@/lib/dates';
+import { useEntriesStore } from '@/state/entriesStore';
 import { useShareCardStore } from '@/state/shareCardStore';
+import { useToastStore } from '@/state/toastStore';
 import { shadows } from '@/theme/shadows';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -22,6 +24,9 @@ interface ArchiveBrowserProps {
 export function ArchiveBrowser({ years, kind }: ArchiveBrowserProps) {
   const [year, setYear] = useState<number | null>(null);
   const [month, setMonth] = useState<number | null>(null);
+  const editEntry = useEntriesStore((s) => s.editEntry);
+  const removeEntry = useEntriesStore((s) => s.removeEntry);
+  const flash = useToastStore((s) => s.flash);
 
   const yearKeys = Object.keys(years)
     .map(Number)
@@ -35,6 +40,19 @@ export function ArchiveBrowser({ years, kind }: ArchiveBrowserProps) {
       text: e.content,
       dateKey: e.dateKey,
     });
+
+  const confirmDelete = (entry: Entry) =>
+    Alert.alert('Delete this reflection?', 'This cannot be undone.', [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Yes, delete',
+        style: 'destructive',
+        onPress: async () => {
+          await removeEntry(kind, entry.id);
+          flash('Removed');
+        },
+      },
+    ]);
 
   return (
     <View className="mt-6">
@@ -71,6 +89,12 @@ export function ArchiveBrowser({ years, kind }: ArchiveBrowserProps) {
                 key={entry.id}
                 e={entry}
                 onShare={entry.type === 'text' ? () => shareEntry(entry) : undefined}
+                onEdit={
+                  entry.type === 'text'
+                    ? (content) => editEntry(kind, entry.id, { content })
+                    : undefined
+                }
+                onDelete={() => confirmDelete(entry)}
               />
             ))}
           </View>
