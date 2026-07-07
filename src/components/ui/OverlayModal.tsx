@@ -1,6 +1,13 @@
 import { X } from 'lucide-react-native';
 import type { PropsWithChildren } from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  View,
+} from 'react-native';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { shadows } from '@/theme/shadows';
@@ -10,6 +17,8 @@ interface OverlayModalProps {
   onClose: () => void;
   /** Darker scrim. */
   dim?: boolean;
+  /** Taller sheet for content-heavy modals (e.g. compose/edit). */
+  tall?: boolean;
 }
 
 /**
@@ -21,30 +30,49 @@ export function OverlayModal({
   visible,
   onClose,
   dim,
+  tall,
   children,
 }: PropsWithChildren<OverlayModalProps>) {
   const { colors } = useTheme();
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable
-        onPress={onClose}
-        className="flex-1 items-center justify-center p-5"
-        style={{ backgroundColor: dim ? 'rgba(59,50,42,0.6)' : 'rgba(59,50,42,0.42)' }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1"
       >
-        <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-[400px]">
-          <View className="max-h-[86%] rounded-[26px] bg-cream p-[22px]" style={shadows.soft}>
-            <ScrollView showsVerticalScrollIndicator={false}>{children}</ScrollView>
-            <Pressable
-              onPress={onClose}
-              className="absolute right-3.5 top-3.5 h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-card"
-              style={shadows.softer}
-              accessibilityLabel="Close"
+        <Pressable
+          onPress={onClose}
+          className="flex-1 items-center justify-center p-5"
+          style={{ backgroundColor: dim ? 'rgba(59,50,42,0.6)' : 'rgba(59,50,42,0.42)' }}
+        >
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            className="w-full max-w-[400px]"
+            style={tall ? { height: '90%' } : undefined}
+          >
+            <View
+              className={`${tall ? 'flex-1 ' : 'max-h-[86%] '}rounded-[26px] bg-cream p-[22px]`}
+              style={shadows.soft}
             >
-              <X size={18} color={colors.ink} />
-            </Pressable>
-          </View>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ flexGrow: 1 }}
+              >
+                {children}
+              </ScrollView>
+              <Pressable
+                onPress={onClose}
+                className="absolute right-3.5 top-3.5 h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-card"
+                style={shadows.softer}
+                accessibilityLabel="Close"
+              >
+                <X size={18} color={colors.ink} />
+              </Pressable>
+            </View>
+          </Pressable>
         </Pressable>
-      </Pressable>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
