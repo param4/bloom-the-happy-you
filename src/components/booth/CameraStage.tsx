@@ -14,13 +14,21 @@ type StageState = 'idle' | 'recording' | 'preview' | 'unavailable';
 interface CameraStageProps {
   /** uri is undefined for placeholder "joy notes" (no camera available). */
   onSave(label: string, uri?: string): void;
+  /** Heading + blurb — defaults to the Joy Booth wording. */
+  title?: string;
+  subtitle?: string;
 }
 
 /**
- * The Joy Booth recorder. On simulators / denied permission it degrades to
- * the prototype's "save a joy note" path instead of failing.
+ * The Joy Booth recorder, reused for pillar video reflections. On simulators /
+ * denied permission it degrades to the prototype's "save a joy note" path
+ * instead of failing.
  */
-export function CameraStage({ onSave }: CameraStageProps) {
+export function CameraStage({
+  onSave,
+  title = 'Capture a happy moment',
+  subtitle = "A message from today's you to a future, low-day you.",
+}: CameraStageProps) {
   const { colors } = useTheme();
   const [state, setState] = useState<StageState>('idle');
   const [label, setLabel] = useState('');
@@ -69,10 +77,8 @@ export function CameraStage({ onSave }: CameraStageProps) {
 
   return (
     <Card bordered className="p-4">
-      <Text className="font-serif text-[18px] text-ink">Capture a happy moment</Text>
-      <Text className="mb-3 font-body text-[13px] text-ink-soft">
-        A message from today's you to a future, low-day you.
-      </Text>
+      <Text className="font-serif text-[18px] text-ink">{title}</Text>
+      <Text className="mb-3 font-body text-[13px] text-ink-soft">{subtitle}</Text>
 
       <View
         className="items-center justify-center overflow-hidden rounded-[18px]"

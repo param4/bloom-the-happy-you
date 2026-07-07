@@ -2,10 +2,11 @@ import {
   RecordingPresets,
   requestRecordingPermissionsAsync,
   setAudioModeAsync,
+  useAudioPlayer,
   useAudioRecorder,
   useAudioRecorderState,
 } from 'expo-audio';
-import { Mic } from 'lucide-react-native';
+import { Mic, Pause, Play } from 'lucide-react-native';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -29,6 +30,8 @@ export function VoiceRecorder({ onSave }: VoiceRecorderProps) {
   const recorderState = useAudioRecorderState(recorder, 500);
   const [state, setState] = useState<State>('idle');
   const [uri, setUri] = useState<string | undefined>();
+  const [playing, setPlaying] = useState(false);
+  const player = useAudioPlayer(uri ?? undefined);
 
   const secs = Math.floor((recorderState.durationMillis ?? 0) / 1000);
   const timer = `${pad(Math.floor(secs / 60))}:${pad(secs % 60)}`;
@@ -56,6 +59,37 @@ export function VoiceRecorder({ onSave }: VoiceRecorderProps) {
     setState('done');
   };
 
+  const discard = () => {
+    if (playing) {
+      player.pause();
+      setPlaying(false);
+    }
+    setUri(undefined);
+    setState('idle');
+  };
+
+  const togglePlay = async () => {
+    if (!uri) return;
+    if (playing) {
+      player.pause();
+      setPlaying(false);
+    } else {
+      // Recording left the mic (earpiece) route active; switch to loud playback.
+      try {
+        await setAudioModeAsync({ playsInSilentMode: true, allowsRecording: false });
+      } catch {
+        // best-effort — play anyway
+      }
+      try {
+        player.seekTo(0);
+      } catch {
+        // fresh player — nothing to rewind
+      }
+      player.play();
+      setPlaying(true);
+    }
+  };
+
   if (state === 'error') {
     return (
       <View className="items-center rounded-2xl border border-line bg-card p-[18px]">
@@ -79,7 +113,7 @@ export function VoiceRecorder({ onSave }: VoiceRecorderProps) {
         <Mic size={28} color={state === 'rec' ? '#fff' : colors.accentDeep} />
       </GlowView>
       <Text className="mb-3 font-serif text-[20px] text-ink">
-        {state === 'rec' ? timer : state === 'done' ? "Lovely — that's kept 💛" : 'Speak freely'}
+        {state === 'rec' ? timer : state === 'done' ? 'How does it sound?' : 'Speak freely'}
       </Text>
       {state === 'idle' && (
         <SoftButton primary onPress={start} className="w-full">
@@ -92,9 +126,26 @@ export function VoiceRecorder({ onSave }: VoiceRecorderProps) {
         </SoftButton>
       )}
       {state === 'done' && (
-        <SoftButton primary onPress={() => onSave(uri)} className="w-full">
-          Keep it
-        </SoftButton>
+        <View className="w-full gap-2">
+          {uri && (
+            <SoftButton raw onPress={togglePlay} className="w-full">
+              {playing ? (
+                <Pause size={16} color={colors.accentDeep} />
+              ) : (
+                <Play size={16} color={colors.accentDeep} />
+              )}
+              <Text className="font-body-extrabold text-[13px] text-accent-deep">
+                {playing ? 'Pause' : 'Play it back'}
+              </Text>
+            </SoftButton>
+          )}
+          <SoftButton primary onPress={() => onSave(uri)} className="w-full">
+            Keep it
+          </SoftButton>
+          <SoftButton onPress={discard} className="w-full bg-cream">
+            Discard
+          </SoftButton>
+        </View>
       )}
     </View>
   );

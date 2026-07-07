@@ -3,9 +3,9 @@ import { Mic, PenLine, Send, Video } from 'lucide-react-native';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { CameraStage } from '@/components/booth/CameraStage';
 import { ArchiveBrowser } from '@/components/pillar/ArchiveBrowser';
 import { EntryCard } from '@/components/pillar/EntryCard';
-import { MiniVideoRecorder } from '@/components/pillar/MiniVideoRecorder';
 import { SendModal } from '@/components/pillar/SendModal';
 import { VoiceRecorder } from '@/components/pillar/VoiceRecorder';
 import { EmptyNote } from '@/components/ui/EmptyNote';
@@ -70,9 +70,13 @@ export default function PillarScreen() {
     celebrate();
   };
 
-  const saveVideo = async (uri?: string) => {
+  const saveVideo = async (label: string, uri?: string) => {
     const videoUri = uri ? await media.persistVideo(uri) : undefined;
-    await addEntry(kind, { type: 'video', content: 'A recorded reflection', videoUri });
+    await addEntry(kind, {
+      type: 'video',
+      content: label.trim() || 'A recorded reflection',
+      videoUri,
+    });
     celebrate();
   };
 
@@ -116,7 +120,15 @@ export default function PillarScreen() {
         )}
         {mode === 'video' && (
           <View className="mt-3">
-            <MiniVideoRecorder onSave={saveVideo} />
+            <CameraStage
+              onSave={saveVideo}
+              title="Record a reflection"
+              subtitle={
+                isGratitude
+                  ? 'A moment of gratitude, saved for future you.'
+                  : 'Speak your appreciation — keep it, or send it later.'
+              }
+            />
           </View>
         )}
 
