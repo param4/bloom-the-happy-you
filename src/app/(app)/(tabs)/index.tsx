@@ -23,6 +23,7 @@ import { useProfileStore } from '@/state/profileStore';
 import { useStreakStore } from '@/state/streakStore';
 import { useToastStore } from '@/state/toastStore';
 import { useTodosStore } from '@/state/todosStore';
+import { useTodayKey } from '@/hooks/useTodayKey';
 import { useTheme } from '@/theme/ThemeProvider';
 
 export default function HomeScreen() {
@@ -33,7 +34,8 @@ export default function HomeScreen() {
   const profile = useProfileStore((s) => s.profile);
   const flash = useToastStore((s) => s.flash);
   const streak = useStreakStore((s) => s.streak);
-  const todos = useTodosStore((s) => s.todos);
+  const day = useTodayKey();
+  const todos = useTodosStore((s) => s.all).filter((t) => t.dateKey === day);
   const toggleTodo = useTodosStore((s) => s.toggle);
   const moodToday = useMoodStore((s) => s.today);
   const pickMood = useMoodStore((s) => s.pickMood);
