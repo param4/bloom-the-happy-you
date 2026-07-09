@@ -1,8 +1,8 @@
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import * as Device from 'expo-device';
-import { Camera, Video as VideoIcon } from 'lucide-react-native';
+import { Camera, Check, Video as VideoIcon } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 
 import { Card } from '@/components/ui/Card';
@@ -32,6 +32,7 @@ export function CameraStage({
   const { colors } = useTheme();
   const [state, setState] = useState<StageState>('idle');
   const [label, setLabel] = useState('');
+  const [highQuality, setHighQuality] = useState(true);
   const [recordedUri, setRecordedUri] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -48,7 +49,10 @@ export function CameraStage({
 
   const onCameraReady = async () => {
     try {
-      const result = await cameraRef.current?.recordAsync({ maxDuration: 180 });
+      // Codec is required on iOS for the CameraView videoBitrate to take effect.
+      const result = await cameraRef.current?.recordAsync(
+        highQuality ? { maxDuration: 180, codec: 'avc1' } : { maxDuration: 180 },
+      );
       if (result?.uri) {
         setRecordedUri(result.uri);
         setState('preview');
@@ -90,6 +94,8 @@ export function CameraStage({
               ref={cameraRef}
               facing="front"
               mode="video"
+              videoQuality={highQuality ? '1080p' : undefined}
+              videoBitrate={highQuality ? 8_000_000 : undefined}
               onCameraReady={onCameraReady}
               style={{ width: '100%', height: '100%' }}
             />
@@ -129,6 +135,29 @@ export function CameraStage({
         placeholderTextColor={colors.inkSoft}
         className="mt-3 rounded-xl border border-line bg-cream px-3 py-2.5 font-body text-[15px] text-ink"
       />
+
+      {state === 'idle' && (
+        <Pressable
+          onPress={() => setHighQuality((v) => !v)}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: highQuality }}
+          className="mt-3 flex-row items-center gap-2.5"
+        >
+          <View
+            className={`h-5 w-5 items-center justify-center rounded-md border ${
+              highQuality ? 'border-accent bg-accent' : 'border-line bg-transparent'
+            }`}
+          >
+            {highQuality && <Check size={14} color="#fff" />}
+          </View>
+          <View className="flex-1">
+            <Text className="font-body-extrabold text-[14px] text-ink">High quality (HD)</Text>
+            <Text className="font-body text-[12px] text-ink-soft">
+              Sharper video, larger file. Turn off to save space.
+            </Text>
+          </View>
+        </Pressable>
+      )}
 
       <View className="mt-3 flex-row gap-2.5">
         {state === 'idle' && (
