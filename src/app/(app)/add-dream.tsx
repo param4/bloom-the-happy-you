@@ -12,6 +12,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Field } from '@/components/ui/Field';
 import { SoftButton } from '@/components/ui/SoftButton';
@@ -25,6 +26,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 export default function AddDreamScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const { media } = useServices();
   const add = useManifestationsStore((s) => s.add);
   const update = useManifestationsStore((s) => s.update);
@@ -94,7 +96,11 @@ export default function AddDreamScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <TopBar title={isEdit ? 'Edit dream' : 'Add a dream'} />
-      <ScrollView contentContainerClassName="px-5 pb-10" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerClassName="px-5"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text className="mb-3 font-body text-[13px] text-ink-soft">
           Write your affirmation as if it's already true.
         </Text>

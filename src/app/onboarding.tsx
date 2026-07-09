@@ -62,7 +62,8 @@ export default function Onboarding() {
   return (
     <View className="flex-1 bg-cream" style={{ paddingTop: insets.top }}>
       <ScrollView
-        contentContainerClassName="flex-grow px-6 py-8"
+        contentContainerClassName="flex-grow px-6 pt-8"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
         keyboardShouldPersistTaps="handled"
       >
         {/* progress dots */}

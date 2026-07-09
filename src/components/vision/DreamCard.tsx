@@ -8,16 +8,18 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 interface DreamCardProps {
   dream: Manifestation;
+  onOpen(): void;
   onMarkAchieved(): void;
   onEdit(): void;
   onDelete(): void;
 }
 
-/** One active vision-board dream. */
-export function DreamCard({ dream, onMarkAchieved, onEdit, onDelete }: DreamCardProps) {
+/** One active vision-board dream. Tapping the card opens a read-only detail view. */
+export function DreamCard({ dream, onOpen, onMarkAchieved, onEdit, onDelete }: DreamCardProps) {
   const { colors, gradients } = useTheme();
   return (
-    <Card bordered className="flex-1 overflow-hidden rounded-[20px]">
+    <Pressable onPress={onOpen} className="flex-1">
+      <Card bordered className="overflow-hidden rounded-[20px]">
       <View>
         {dream.imageUri ? (
           <Image source={{ uri: dream.imageUri }} className="h-[92px] w-full" resizeMode="cover" />
@@ -56,6 +58,7 @@ export function DreamCard({ dream, onMarkAchieved, onEdit, onDelete }: DreamCard
           <Text className="font-body-extrabold text-xs text-ink-soft">Delete</Text>
         </Pressable>
       </View>
-    </Card>
+      </Card>
+    </Pressable>
   );
 }

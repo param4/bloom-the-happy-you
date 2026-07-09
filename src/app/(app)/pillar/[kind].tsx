@@ -104,7 +104,7 @@ export default function PillarScreen() {
     ]);
 
   return (
-    <Screen>
+    <Screen safeBottom>
       <TopBar title={isGratitude ? 'Gratitude' : 'Appreciation'} />
       <View className="px-5">
         <NotebookPad

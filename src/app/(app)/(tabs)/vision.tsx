@@ -1,8 +1,10 @@
 import { useRouter } from 'expo-router';
 import { Plus, Wand2 } from 'lucide-react-native';
+import { useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { DreamCard } from '@/components/vision/DreamCard';
+import { DreamViewModal } from '@/components/vision/DreamViewModal';
 import { ManifestedRow } from '@/components/vision/ManifestedRow';
 import { ReminderRow } from '@/components/vision/ReminderRow';
 import { GradientCard } from '@/components/ui/GradientCard';
@@ -22,6 +24,9 @@ export default function VisionScreen() {
   const setAchieved = useManifestationsStore((s) => s.setAchieved);
   const remove = useManifestationsStore((s) => s.remove);
   const flash = useToastStore((s) => s.flash);
+
+  const [viewId, setViewId] = useState<string | null>(null);
+  const viewing = manifestations.find((m) => m.id === viewId) ?? null;
 
   const active = manifestations.filter((m) => !m.achieved);
   const done = manifestations.filter((m) => m.achieved);
@@ -99,6 +104,7 @@ export default function VisionScreen() {
                   <DreamCard
                     key={cell.id}
                     dream={cell}
+                    onOpen={() => setViewId(cell.id)}
                     onMarkAchieved={() => onAchieved(cell.id)}
                     onEdit={() =>
                       router.push({ pathname: '/(app)/add-dream', params: { id: cell.id } })
@@ -117,12 +123,44 @@ export default function VisionScreen() {
             <SectionLabel>Manifested ✨ — dreams now real</SectionLabel>
             <View className="gap-2.5">
               {done.map((dream) => (
-                <ManifestedRow key={dream.id} dream={dream} onUndo={() => onUndo(dream.id)} />
+                <ManifestedRow
+                  key={dream.id}
+                  dream={dream}
+                  onOpen={() => setViewId(dream.id)}
+                  onUndo={() => onUndo(dream.id)}
+                />
               ))}
             </View>
           </View>
         )}
       </View>
+
+      <DreamViewModal
+        dream={viewing}
+        onClose={() => setViewId(null)}
+        onEdit={() => {
+          if (!viewing) return;
+          const id = viewing.id;
+          setViewId(null);
+          router.push({ pathname: '/(app)/add-dream', params: { id } });
+        }}
+        onMarkAchieved={() => {
+          if (!viewing) return;
+          void onAchieved(viewing.id);
+          setViewId(null);
+        }}
+        onUndo={() => {
+          if (!viewing) return;
+          void onUndo(viewing.id);
+          setViewId(null);
+        }}
+        onDelete={() => {
+          if (!viewing) return;
+          const { id, title } = viewing;
+          setViewId(null);
+          onDelete(id, title);
+        }}
+      />
     </Screen>
   );
 }

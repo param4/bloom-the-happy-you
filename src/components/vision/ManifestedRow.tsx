@@ -5,16 +5,25 @@ import { GradientCard } from '@/components/ui/GradientCard';
 import type { Manifestation } from '@/domain/manifestation';
 import { useTheme } from '@/theme/ThemeProvider';
 
-/** A dream that came true. */
-export function ManifestedRow({ dream, onUndo }: { dream: Manifestation; onUndo(): void }) {
+/** A dream that came true. Tapping the row opens a read-only detail view. */
+export function ManifestedRow({
+  dream,
+  onOpen,
+  onUndo,
+}: {
+  dream: Manifestation;
+  onOpen(): void;
+  onUndo(): void;
+}) {
   const { colors, gradients } = useTheme();
   return (
-    <GradientCard
-      colors={gradients.manifested}
-      direction="wide"
-      className="flex-row items-center gap-3 rounded-[18px] p-4"
-      style={{ borderWidth: 1, borderColor: `${colors.sun}66` }}
-    >
+    <Pressable onPress={onOpen}>
+      <GradientCard
+        colors={gradients.manifested}
+        direction="wide"
+        className="flex-row items-center gap-3 rounded-[18px] p-4"
+        style={{ borderWidth: 1, borderColor: `${colors.sun}66` }}
+      >
       <View
         className="h-10 w-10 items-center justify-center rounded-xl"
         style={{ backgroundColor: `${colors.sun}44` }}
@@ -34,6 +43,7 @@ export function ManifestedRow({ dream, onUndo }: { dream: Manifestation; onUndo(
       >
         <Undo2 size={18} color={colors.accentDeep} />
       </Pressable>
-    </GradientCard>
+      </GradientCard>
+    </Pressable>
   );
 }
