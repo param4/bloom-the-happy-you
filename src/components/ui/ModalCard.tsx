@@ -30,7 +30,12 @@ export function ModalCard({ dim, children }: PropsWithChildren<ModalCardProps>) 
             className="max-h-[640px] rounded-[26px] bg-cream p-[22px]"
             style={shadows.soft}
           >
-            <ScrollView showsVerticalScrollIndicator={false}>{children}</ScrollView>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              {children}
+            </ScrollView>
             <Pressable
               onPress={() => router.back()}
               className="absolute right-3.5 top-3.5 h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-white"
