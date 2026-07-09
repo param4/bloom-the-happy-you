@@ -9,7 +9,9 @@ export class AsyncStorageSettingsRepository implements ISettingsRepository {
 
   async get(): Promise<Settings> {
     const stored = await this.kv.get<Settings>(storageKeys.settings);
-    return stored ?? DEFAULT_SETTINGS;
+    // Merge over defaults so settings persisted before a new field was added
+    // still resolve that field (e.g. recentDreamIds) instead of undefined.
+    return stored ? { ...DEFAULT_SETTINGS, ...stored } : DEFAULT_SETTINGS;
   }
 
   save(settings: Settings): Promise<void> {

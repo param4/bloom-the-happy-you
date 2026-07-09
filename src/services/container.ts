@@ -32,7 +32,7 @@ import { MediaStore } from './MediaStore';
 import { MomentService } from './MomentService';
 import { NotificationService } from './NotificationService';
 import { ProfileService } from './ProfileService';
-import { randomPicker } from './random';
+import { randomPicker, randomSource } from './random';
 import { ResurfaceService } from './ResurfaceService';
 import { StreakService } from './StreakService';
 
@@ -88,7 +88,7 @@ export function createContainer(overrides: Partial<AppServices> = {}): AppServic
     profileService: overrides.profileService ?? new ProfileService(profiles),
     streak: overrides.streak ?? new StreakService(settings),
     resurface: overrides.resurface ?? new ResurfaceService(entries, videos, randomPicker),
-    moment: overrides.moment ?? new MomentService(manifestations, randomPicker),
+    moment: overrides.moment ?? new MomentService(manifestations, settings, randomSource),
     media: overrides.media ?? new MediaStore(),
     notifications: overrides.notifications ?? new NotificationService(),
     dataReset: overrides.dataReset ?? new DataResetService(kv),
