@@ -10,10 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.bloom.app"
+      "bundleIdentifier": "io.github.param4.bloom"
     },
     "android": {
-      "package": "com.bloom.app",
+      "package": "io.github.param4.bloom",
       "adaptiveIcon": {
         "backgroundColor": "#FBF7F0",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
