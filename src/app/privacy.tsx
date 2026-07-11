@@ -15,8 +15,8 @@ const SECTIONS: { heading: string; body: string }[] = [
     body: 'Everything you create in Bloom — journal entries, voice notes, videos, photos, moods, to-dos and your streak — is stored only on this device. It is never uploaded, and we cannot see it.',
   },
   {
-    heading: 'Your account',
-    body: 'Creating an account is optional. If you do, your email address and name are stored securely by Clerk, our sign-in provider, and are used only to sign you in. Guest mode creates no account and sends nothing off the device.',
+    heading: 'No account needed',
+    body: 'Bloom has no sign-up. There is no email to provide and no profile stored on any server — the app collects no personal data at all.',
   },
   {
     heading: 'No tracking',
@@ -28,7 +28,7 @@ const SECTIONS: { heading: string; body: string }[] = [
   },
   {
     heading: 'Deleting your data',
-    body: '"Clear data" in your profile menu permanently removes all content, including recorded files. "Delete account" also removes your account from our sign-in provider. Uninstalling the app deletes all local data.',
+    body: '"Clear data" in your profile menu permanently removes all content, including recorded files. Uninstalling the app deletes all local data — nothing you create is stored anywhere else.',
   },
   {
     heading: 'Questions',
@@ -46,7 +46,7 @@ export default function PrivacyScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
       >
         <Text className="mb-4 font-body text-[13px] text-ink-soft">
-          Bloom is built to keep your inner world private. Effective 9 July 2026.
+          Bloom is built to keep your inner world private. Effective 11 July 2026.
         </Text>
         {SECTIONS.map(({ heading, body }) => (
           <View key={heading} className="mb-4">

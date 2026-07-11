@@ -1,6 +1,6 @@
 # Bloom — Privacy Policy
 
-_Effective 9 July 2026_
+_Effective 11 July 2026_
 
 Bloom ("the app") is a personal wellbeing journal. It is built so that your inner world stays private.
 
@@ -8,11 +8,9 @@ Bloom ("the app") is a personal wellbeing journal. It is built so that your inne
 
 Everything you create in Bloom — journal entries, voice notes, videos, photos, mood check-ins, to-do lists, and your streak — is stored **only on your device**. This content is never uploaded to us or to any third party, and we have no way to access it.
 
-## Your account (optional)
+## No account, nothing to sign up for
 
-You can use Bloom as a guest with no account at all; guest mode sends nothing off your device.
-
-If you create an account, your **email address and name** are stored securely by [Clerk](https://clerk.com/legal/privacy), our authentication provider, and are used solely to sign you in. We store no other personal information, and your journal content is not linked to your account on any server.
+Bloom does not require — or currently offer — an account. There is no sign-up, no email address to provide, and no profile stored on any server. The app collects **no personal data** at all.
 
 ## No tracking
 
@@ -29,10 +27,9 @@ Each permission is optional and requested only when you first use the related fe
 ## Deleting your data
 
 - **Clear data** (profile menu) permanently deletes all content in the app, including recorded video, audio, and image files.
-- **Delete account** (profile menu) additionally deletes your account from our sign-in provider.
 - Uninstalling the app deletes all locally stored data.
 
-If you cannot access the app, you can request account deletion by contacting us at the address below; because journal content never leaves your device, uninstalling the app removes it completely.
+Because nothing you create ever leaves your device, there is no copy held anywhere else to request deletion of.
 
 ## Children
 
@@ -53,11 +50,13 @@ If this policy changes, the updated version will be posted at this address with 
   public (e.g. GitHub Pages, Notion public page, your site) and fill in the
   contact email above.
 
-  Data Safety form guidance for this app:
-  - Data collected: "Personal info → Email address, Name" (account, optional,
-    not shared, deletable). Nothing else is collected off-device.
-  - Journal/mood/media content is NOT "collected" in Play's sense (it never
-    leaves the device), so it is not declared as collected data.
-  - Account deletion URL: Clerk's hosted account portal, or describe the
-    in-app "Delete account" flow.
+  Data Safety form guidance for this app (guest-only build):
+  - Declare NO data collected. Journal/mood/media content is not "collected"
+    in Play's sense (it never leaves the device), and with login hidden no
+    account, email, or name is gathered either.
+  - No account creation means Play's account-deletion requirement does not
+    apply to this release.
+  - If login/accounts are re-enabled later, update this policy and the Data
+    Safety form (Personal info → Email address, Name; deletion via the in-app
+    "Delete account" flow) BEFORE shipping that build.
 -->
