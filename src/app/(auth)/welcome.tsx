@@ -1,6 +1,6 @@
 import { isClerkAPIResponseError, useSignIn, useSignUp } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
-import { Flower2, KeyRound, Lock, Mail, User } from 'lucide-react-native';
+import { KeyRound, Lock, Mail, User } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { GradientCard } from '@/components/ui/GradientCard';
 import { SoftButton } from '@/components/ui/SoftButton';
 import { useServices } from '@/providers/ServicesProvider';
@@ -118,7 +119,7 @@ export default function Welcome() {
               className="mb-4 h-[78px] w-[78px] items-center justify-center rounded-[26px]"
               style={shadows.soft}
             >
-              <Flower2 size={42} color={colors.accent} />
+              <BloomLogo size={42} color={colors.accent} />
             </GradientCard>
             <Text className="font-serif text-4xl text-ink">Bloom</Text>
             <Text className="mt-1 font-serif-italic text-base text-ink-soft">

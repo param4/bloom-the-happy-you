@@ -1,4 +1,4 @@
-import { Flower2 } from 'lucide-react-native';
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import Animated, {
@@ -69,7 +69,7 @@ export function BloomBurst() {
       <Ring color={colors.accent} size={120} delay={0} />
       <Ring color={colors.sun} size={200} delay={150} />
       <Animated.View style={popStyle}>
-        <Flower2 size={92} color={colors.accent} strokeWidth={1.6} />
+        <BloomLogo size={92} color={colors.accent} strokeWidth={1.6} />
       </Animated.View>
     </View>
   );

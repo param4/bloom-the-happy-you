@@ -1,8 +1,9 @@
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { Download, Flower2, Play, Share2 } from 'lucide-react-native';
+import { Download, Play, Share2 } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { GradientCard } from '@/components/ui/GradientCard';
 import { OverlayModal } from '@/components/ui/OverlayModal';
 import { SoftButton } from '@/components/ui/SoftButton';
@@ -53,7 +54,7 @@ export function BrandedVideoModal({ video, onClose }: BrandedVideoModalProps) {
               className="overflow-hidden rounded-[22px] border border-line p-4"
             >
               <View className="mb-3 flex-row items-center gap-2">
-                <Flower2 size={22} color={colors.accent} />
+                <BloomLogo size={22} color={colors.accent} />
                 <Text className="font-serif text-[18px] leading-none text-ink">Bloom</Text>
               </View>
 

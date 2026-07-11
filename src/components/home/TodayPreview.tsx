@@ -1,8 +1,8 @@
-import { Flower2 } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 
 import { TodoProgress } from '@/components/todo/TodoProgress';
 import { TodoRow } from '@/components/todo/TodoRow';
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { Card } from '@/components/ui/Card';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import type { Todo } from '@/domain/todo';
@@ -41,7 +41,7 @@ export function TodayPreview({ todos, onToggle, onOpenList }: TodayPreviewProps)
         </View>
         {todos.length > 0 && doneCount === todos.length && (
           <View className="mt-2.5 flex-row items-center gap-1.5">
-            <Flower2 size={16} color={colors.accentDeep} />
+            <BloomLogo size={16} color={colors.accentDeep} />
             <Text className="font-serif text-[13px] text-accent-deep">
               All tended to — beautifully done.
             </Text>

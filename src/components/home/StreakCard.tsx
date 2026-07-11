@@ -1,6 +1,6 @@
-import { Flower2 } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { Card } from '@/components/ui/Card';
 import type { StreakState } from '@/domain/streak';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -10,7 +10,7 @@ export function StreakCard({ streak }: { streak: StreakState }) {
   const { colors } = useTheme();
   return (
     <Card className="mt-4 flex-row items-center gap-3.5 rounded-[20px] px-4 py-4">
-      <Flower2 size={38} color={colors.accent} />
+      <BloomLogo size={38} color={colors.accent} />
       <View className="flex-1">
         <Text className="font-serif text-lg text-ink">
           Welcome back — {streak.count} {streak.count === 1 ? 'day' : 'days'} in

@@ -1,8 +1,9 @@
 import { useClerk } from '@clerk/clerk-expo';
-import { Flower2, LogOut, Trash2 } from 'lucide-react-native';
+import { LogOut, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Image, Modal, Pressable, Text, View } from 'react-native';
 
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { GradientCard } from '@/components/ui/GradientCard';
 import type { Profile } from '@/domain/profile';
 import type { ThemeKey } from '@/domain/theme';
@@ -54,7 +55,7 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
 
   return (
     <View className="flex-row items-center gap-2.5">
-      <Flower2 size={30} color={colors.accent} />
+      <BloomLogo size={30} color={colors.accent} />
       <View className="flex-1">
         <Text className="font-serif text-xl leading-6 text-ink">Bloom</Text>
         <Text className="font-serif-italic text-xs text-ink-soft">The happy you</Text>

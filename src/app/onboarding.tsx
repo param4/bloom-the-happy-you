@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
-import { Check, Flower2 } from 'lucide-react-native';
+import { Check } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { BloomLogo } from '@/components/ui/BloomLogo';
 import { NotebookPad } from '@/components/ui/NotebookPad';
 import { SoftButton } from '@/components/ui/SoftButton';
 import { PROMPTS, dayIndex } from '@/constants/prompts';
@@ -79,7 +80,7 @@ export default function Onboarding() {
         <Animated.View key={step} entering={FadeIn.duration(300)} className="flex-1">
           {step === 0 && (
             <View className="flex-1">
-              <Flower2 size={40} color={colors.accent} />
+              <BloomLogo size={40} color={colors.accent} />
               <Text className="mb-2 mt-4 font-serif text-[30px] leading-9 text-ink">
                 Welcome, {firstName}. Let’s set the mood — sixty seconds.
               </Text>
