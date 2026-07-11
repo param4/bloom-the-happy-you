@@ -2,14 +2,16 @@ import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo
 import * as Device from 'expo-device';
 import { Camera, Check, Video as VideoIcon } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, Text, TextInput, View } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 
 import { Card } from '@/components/ui/Card';
 import { SoftButton } from '@/components/ui/SoftButton';
 import { useTheme } from '@/theme/ThemeProvider';
 
-type StageState = 'idle' | 'recording' | 'preview' | 'unavailable';
+/** 'denied' = a real device without camera/mic access; 'unavailable' = no
+ *  camera hardware at all (simulator). The copy must not confuse the two. */
+type StageState = 'idle' | 'recording' | 'preview' | 'denied' | 'unavailable';
 
 interface CameraStageProps {
   /** uri is undefined for placeholder "joy notes" (no camera available). */
@@ -42,7 +44,7 @@ export function CameraStage({
     if (!Device.isDevice) return setState('unavailable');
     const cam = cameraPermission?.granted || (await requestCameraPermission()).granted;
     const mic = micPermission?.granted || (await requestMicPermission()).granted;
-    if (!cam || !mic) return setState('unavailable');
+    if (!cam || !mic) return setState('denied');
     setRecordedUri(null);
     setState('recording');
   };
@@ -60,7 +62,8 @@ export function CameraStage({
         setState('idle');
       }
     } catch {
-      setState('unavailable');
+      // Recording was interrupted (backgrounded, call, permission revoked…).
+      setState(Device.isDevice ? 'denied' : 'unavailable');
     }
   };
 
@@ -108,11 +111,19 @@ export function CameraStage({
           <RecordingPreview uri={recordedUri} />
         ) : (
           <View className="items-center px-5">
-            {state === 'unavailable' ? (
+            {state === 'denied' ? (
               <>
                 <Camera size={34} color="#fff" style={{ opacity: 0.8 }} />
                 <Text className="mt-2 text-center font-body text-[13px] leading-5 text-white opacity-90">
-                  Camera isn't available here. On your phone it records normally — for now you
+                  Bloom couldn’t reach the camera. Check Camera and Microphone access in
+                  Settings, or save a joy note instead.
+                </Text>
+              </>
+            ) : state === 'unavailable' ? (
+              <>
+                <Camera size={34} color="#fff" style={{ opacity: 0.8 }} />
+                <Text className="mt-2 text-center font-body text-[13px] leading-5 text-white opacity-90">
+                  Camera isn’t available here. On your phone it records normally — for now you
                   can save a joy note.
                 </Text>
               </>
@@ -120,7 +131,7 @@ export function CameraStage({
               <>
                 <VideoIcon size={34} color="#fff" style={{ opacity: 0.8 }} />
                 <Text className="mt-2 font-body text-[13px] text-white opacity-90">
-                  Tap record when you're ready
+                  Tap record when you’re ready
                 </Text>
               </>
             )}
@@ -186,6 +197,22 @@ export function CameraStage({
               Retake
             </SoftButton>
           </>
+        )}
+        {state === 'denied' && (
+          <View className="flex-1 gap-2.5">
+            <View className="flex-row gap-2.5">
+              {/* Re-requests permission, so it recovers once access is granted. */}
+              <SoftButton primary onPress={start} className="flex-1">
+                Try again
+              </SoftButton>
+              <SoftButton ghost onPress={() => Linking.openSettings()} className="flex-1">
+                Open Settings
+              </SoftButton>
+            </View>
+            <SoftButton onPress={saveJoyNote} className="bg-cream">
+              Save a joy note
+            </SoftButton>
+          </View>
         )}
         {state === 'unavailable' && (
           <SoftButton primary onPress={saveJoyNote} className="flex-1">

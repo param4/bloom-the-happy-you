@@ -16,12 +16,13 @@ export class StreakService implements IStreakService {
   }
 
   async recordActivity(dateKey: DateKey): Promise<StreakState> {
-    const settings = await this.settings.get();
-    const next = advanceStreak(settings.streak, dateKey);
-    if (next !== settings.streak) {
-      await this.settings.save({ ...settings, streak: next });
-    }
-    return next;
+    // Atomic update — other features write the same settings blob, and a
+    // plain get→save here could clobber their fields (or lose this one).
+    const next = await this.settings.update((settings) => ({
+      ...settings,
+      streak: advanceStreak(settings.streak, dateKey),
+    }));
+    return next.streak;
   }
 }
 

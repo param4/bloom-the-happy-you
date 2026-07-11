@@ -43,10 +43,17 @@ export const createManifestationsStore = (services: AppServices) =>
       set({
         manifestations: get().manifestations.map((m) => (m.id === id ? updated : m)),
       });
+      // A replaced or cleared image leaves its old persisted file behind —
+      // best-effort delete so edits don't accumulate orphans.
+      if (current.imageUri && current.imageUri !== updated.imageUri) {
+        await services.media.remove(current.imageUri).catch(() => {});
+      }
     },
     async remove(id) {
+      const current = get().manifestations.find((m) => m.id === id);
       await services.manifestations.remove(id);
       set({ manifestations: get().manifestations.filter((m) => m.id !== id) });
+      if (current?.imageUri) await services.media.remove(current.imageUri).catch(() => {});
     },
     async setAchieved(id, achieved) {
       const current = get().manifestations.find((m) => m.id === id);

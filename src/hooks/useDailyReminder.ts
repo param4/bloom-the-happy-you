@@ -38,7 +38,7 @@ export function useDailyReminder() {
         ? await notifications.scheduleDaily(next)
         : null;
 
-      await settings.save({ ...current, reminderTime: next, reminderNotificationId });
+      await settings.update((s) => ({ ...s, reminderTime: next, reminderNotificationId }));
     },
     [settings, notifications],
   );

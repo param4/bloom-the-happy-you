@@ -12,23 +12,18 @@ export class AsyncStorageTodoRepository implements ITodoRepository {
   }
 
   async add(todo: Todo): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(storageKeys.todos, [...all, todo]);
+    await this.kv.update<Todo[]>(storageKeys.todos, (all) => [...(all ?? []), todo]);
   }
 
   async update(todo: Todo): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.todos,
-      all.map((t) => (t.id === todo.id ? todo : t)),
+    await this.kv.update<Todo[]>(storageKeys.todos, (all) =>
+      (all ?? []).map((t) => (t.id === todo.id ? todo : t)),
     );
   }
 
   async remove(id: string): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.todos,
-      all.filter((t) => t.id !== id),
+    await this.kv.update<Todo[]>(storageKeys.todos, (all) =>
+      (all ?? []).filter((t) => t.id !== id),
     );
   }
 }

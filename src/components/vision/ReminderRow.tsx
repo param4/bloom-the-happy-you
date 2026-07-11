@@ -1,7 +1,7 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Bell } from 'lucide-react-native';
 import { useState } from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { Linking, Platform, Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { SoftButton } from '@/components/ui/SoftButton';
@@ -52,9 +52,17 @@ export function ReminderRow() {
       </View>
 
       {permissionDenied && (
-        <Text className="mt-2 font-body text-xs text-accent-deep">
-          Notifications are off for Bloom — enable them in Settings to get your nudge.
-        </Text>
+        <View className="mt-2 flex-row items-center gap-2.5">
+          <Text className="flex-1 font-body text-xs text-accent-deep">
+            Notifications are off for Bloom — your nudge can’t arrive until they’re enabled.
+          </Text>
+          <Pressable
+            onPress={() => Linking.openSettings()}
+            className="rounded-xl border border-line bg-cream px-2.5 py-2"
+          >
+            <Text className="font-body-extrabold text-xs text-ink">Open Settings</Text>
+          </Pressable>
+        </View>
       )}
 
       {/*

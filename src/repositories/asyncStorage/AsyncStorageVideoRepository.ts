@@ -12,23 +12,18 @@ export class AsyncStorageVideoRepository implements IVideoRepository {
   }
 
   async add(video: JoyVideo): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(storageKeys.videos, [video, ...all]);
+    await this.kv.update<JoyVideo[]>(storageKeys.videos, (all) => [video, ...(all ?? [])]);
   }
 
   async update(video: JoyVideo): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.videos,
-      all.map((v) => (v.id === video.id ? video : v)),
+    await this.kv.update<JoyVideo[]>(storageKeys.videos, (all) =>
+      (all ?? []).map((v) => (v.id === video.id ? video : v)),
     );
   }
 
   async remove(id: string): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.videos,
-      all.filter((v) => v.id !== id),
+    await this.kv.update<JoyVideo[]>(storageKeys.videos, (all) =>
+      (all ?? []).filter((v) => v.id !== id),
     );
   }
 }

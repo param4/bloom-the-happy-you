@@ -29,7 +29,7 @@ export function PillarCards({ onOpenPillar, onOpenVision }: PillarCardsProps) {
   const { colors } = useTheme();
   return (
     <View className="mt-5">
-      <SectionLabel>Today's three pillars</SectionLabel>
+      <SectionLabel>Today’s three pillars</SectionLabel>
       <View className="gap-3">
         {PILLARS.map(({ key, title, sub, Icon }) => (
           <Pressable

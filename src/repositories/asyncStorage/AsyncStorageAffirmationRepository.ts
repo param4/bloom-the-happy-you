@@ -12,23 +12,21 @@ export class AsyncStorageAffirmationRepository implements IAffirmationRepository
   }
 
   async add(affirmation: Affirmation): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(storageKeys.affirmations, [affirmation, ...all]);
+    await this.kv.update<Affirmation[]>(storageKeys.affirmations, (all) => [
+      affirmation,
+      ...(all ?? []),
+    ]);
   }
 
   async update(affirmation: Affirmation): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.affirmations,
-      all.map((a) => (a.id === affirmation.id ? affirmation : a)),
+    await this.kv.update<Affirmation[]>(storageKeys.affirmations, (all) =>
+      (all ?? []).map((a) => (a.id === affirmation.id ? affirmation : a)),
     );
   }
 
   async remove(id: string): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.affirmations,
-      all.filter((a) => a.id !== id),
+    await this.kv.update<Affirmation[]>(storageKeys.affirmations, (all) =>
+      (all ?? []).filter((a) => a.id !== id),
     );
   }
 }

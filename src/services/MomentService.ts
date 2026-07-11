@@ -47,11 +47,15 @@ export class MomentService implements IMomentService {
     const chosen = this.weightedPick(eligible, weights);
 
     // Prepend the chosen dream and cap the list to the recency window.
-    const nextRecent = [chosen.id, ...recent.filter((id) => id !== chosen.id)].slice(
-      0,
-      RECENCY_WINDOW,
-    );
-    await this.settings.save({ ...settings, recentDreamIds: nextRecent });
+    // Atomic update recomputed from the latest stored value, so a concurrent
+    // settings writer (streak, theme, reminder) can't be clobbered.
+    await this.settings.update((current) => ({
+      ...current,
+      recentDreamIds: [
+        chosen.id,
+        ...(current.recentDreamIds ?? []).filter((id) => id !== chosen.id),
+      ].slice(0, RECENCY_WINDOW),
+    }));
 
     return chosen;
   }

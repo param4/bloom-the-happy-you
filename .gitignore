@@ -30,8 +30,11 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# env files hold per-environment keys (Clerk publishable key) — never commit
+# them; .env.example documents the expected variables.
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo

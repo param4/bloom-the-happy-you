@@ -49,10 +49,14 @@ export interface IMomentService {
 export interface IMediaStore {
   persistVideo(tempUri: string): Promise<string>;
   persistImage(tempUri: string): Promise<string>;
+  persistAudio(tempUri: string): Promise<string>;
   remove(uri: string): Promise<void>;
+  /** Deletes every persisted media file (the whole app media directory). */
+  removeAll(): Promise<void>;
 }
 
-/** Owns wiping all stored user content (leaves the profile intact). */
+/** Owns wiping all stored user content, including persisted media files
+ *  (leaves the profile intact). */
 export interface IDataResetService {
   clearAll(): Promise<void>;
 }

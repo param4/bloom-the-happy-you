@@ -42,7 +42,7 @@ export default function LiftMeUpModal() {
         ) : (
           <>
             <Text className="my-3 text-center font-serif text-[24px] leading-8 text-ink">
-              Here's you, {daysBetween(dateKey!)} days ago, feeling good.
+              Here’s you, {daysBetween(dateKey!)} days ago, feeling good.
             </Text>
 
             {item.kind === 'video' ? (

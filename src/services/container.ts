@@ -76,6 +76,8 @@ export function createContainer(overrides: Partial<AppServices> = {}): AppServic
   const affirmations =
     overrides.affirmations ?? new AsyncStorageAffirmationRepository(kv);
 
+  const media = overrides.media ?? new MediaStore();
+
   return {
     entries,
     todos,
@@ -89,9 +91,9 @@ export function createContainer(overrides: Partial<AppServices> = {}): AppServic
     streak: overrides.streak ?? new StreakService(settings),
     resurface: overrides.resurface ?? new ResurfaceService(entries, videos, randomPicker),
     moment: overrides.moment ?? new MomentService(manifestations, settings, randomSource),
-    media: overrides.media ?? new MediaStore(),
+    media,
     notifications: overrides.notifications ?? new NotificationService(),
-    dataReset: overrides.dataReset ?? new DataResetService(kv),
+    dataReset: overrides.dataReset ?? new DataResetService(kv, media),
   };
 }
 

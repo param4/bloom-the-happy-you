@@ -6,9 +6,10 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from 'expo-audio';
+import * as Device from 'expo-device';
 import { Mic, Pause, Play } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 
 import { GlowView } from '@/components/ui/GlowView';
 import { SoftButton } from '@/components/ui/SoftButton';
@@ -94,12 +95,30 @@ export function VoiceRecorder({ onSave }: VoiceRecorderProps) {
     return (
       <View className="items-center rounded-2xl border border-line bg-card p-[18px]">
         <Text className="mb-3 text-center font-body text-[13px] text-ink-soft">
-          Microphone isn’t available right now — on your phone it records normally. You can still
-          save a voice note.
+          {Device.isDevice
+            ? "Bloom couldn't reach the microphone. Check Microphone access in Settings, or save a note without audio."
+            : 'Microphone isn’t available here — on your phone it records normally. You can still save a voice note.'}
         </Text>
-        <SoftButton primary onPress={() => onSave(undefined)} className="w-full">
-          Save voice note
-        </SoftButton>
+        <View className="w-full gap-2">
+          {Device.isDevice && (
+            <>
+              {/* Re-requests permission, so it recovers once access is granted. */}
+              <SoftButton primary onPress={start} className="w-full">
+                Try again
+              </SoftButton>
+              <SoftButton ghost onPress={() => Linking.openSettings()} className="w-full">
+                Open Settings
+              </SoftButton>
+            </>
+          )}
+          <SoftButton
+            primary={!Device.isDevice}
+            onPress={() => onSave(undefined)}
+            className={`w-full ${Device.isDevice ? 'bg-cream' : ''}`}
+          >
+            Save voice note
+          </SoftButton>
+        </View>
       </View>
     );
   }

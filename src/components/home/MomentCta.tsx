@@ -19,7 +19,7 @@ export function MomentCta({ onPress }: { onPress(): void }) {
         <View className="flex-1">
           <Text className="font-serif text-base text-white">Your manifestation moment</Text>
           <Text className="font-body text-[13px] text-white opacity-95">
-            Pause for 30 seconds with what you're calling in.
+            Pause for 30 seconds with what you’re calling in.
           </Text>
         </View>
       </GradientCard>

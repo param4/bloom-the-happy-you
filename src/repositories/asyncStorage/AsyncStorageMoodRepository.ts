@@ -19,8 +19,9 @@ export class AsyncStorageMoodRepository implements IMoodRepository {
   }
 
   async save(log: MoodLog): Promise<void> {
-    const map = await this.getMap();
-    map[log.dateKey] = log;
-    await this.kv.set(storageKeys.moods, map);
+    await this.kv.update<Record<DateKey, MoodLog>>(storageKeys.moods, (map) => ({
+      ...(map ?? {}),
+      [log.dateKey]: log,
+    }));
   }
 }

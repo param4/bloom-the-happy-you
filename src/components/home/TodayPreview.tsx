@@ -28,7 +28,7 @@ export function TodayPreview({ todos, onToggle, onOpenList }: TodayPreviewProps)
           </Pressable>
         }
       >
-        Today's list
+        Today’s list
       </SectionLabel>
       <Card className="rounded-[20px] p-4">
         <View className="mb-3">

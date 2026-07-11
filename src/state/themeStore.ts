@@ -19,8 +19,7 @@ export const createThemeStore = (services: AppServices) =>
     },
     async setTheme(key) {
       set({ themeKey: key });
-      const settings = await services.settings.get();
-      await services.settings.save({ ...settings, theme: key });
+      await services.settings.update((settings) => ({ ...settings, theme: key }));
     },
   }));
 

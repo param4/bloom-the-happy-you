@@ -1,3 +1,4 @@
+import { useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { BookHeart, ChevronRight, Video } from 'lucide-react-native';
 import { useEffect, useRef } from 'react';
@@ -29,6 +30,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const greeting = useGreeting();
   const { colors } = useTheme();
+  const { user } = useUser();
 
   const profile = useProfileStore((s) => s.profile);
   const flash = useToastStore((s) => s.flash);
@@ -68,16 +70,39 @@ export default function HomeScreen() {
     flash('Your space is clear — a fresh start.');
   };
 
+  // Play policy requires in-app account deletion. Remote first — if Clerk
+  // refuses (or the session is momentarily gone), keep local data so we never
+  // report a false success on a deletion the account didn't actually get. On
+  // success the session ends and the auth gate returns to the welcome screen.
+  const onDeleteAccount = async () => {
+    if (!user) {
+      flash("We couldn't reach your account just now — please try again.");
+      return;
+    }
+    try {
+      await user.delete();
+    } catch {
+      flash("Account deletion didn't go through — please try again.");
+      return;
+    }
+    await resetContentData();
+    await useProfileStore.getState().signOut();
+  };
+
   return (
     <Screen padBottom={48}>
       <View className="px-5 pt-3">
-        <GreetingHeader profile={profile} onClearData={onClearData} />
+        <GreetingHeader
+          profile={profile}
+          onClearData={onClearData}
+          onDeleteAccount={onDeleteAccount}
+        />
 
         <Text className="mb-1 mt-5 font-serif text-[30px] text-ink">
           {greeting}, {firstName}.
         </Text>
         <Text className="font-body text-[15px] text-ink-soft">
-          It's good to see you back. No pressure today — just two quiet minutes.
+          It’s good to see you back. No pressure today — just two quiet minutes.
         </Text>
 
         <StreakCard streak={streak} />

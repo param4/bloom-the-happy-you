@@ -12,23 +12,18 @@ export class AsyncStorageEntryRepository implements IEntryRepository {
   }
 
   async add(kind: EntryKind, entry: Entry): Promise<void> {
-    const all = await this.getAll(kind);
-    await this.kv.set(storageKeys.entries(kind), [entry, ...all]);
+    await this.kv.update<Entry[]>(storageKeys.entries(kind), (all) => [entry, ...(all ?? [])]);
   }
 
   async update(kind: EntryKind, entry: Entry): Promise<void> {
-    const all = await this.getAll(kind);
-    await this.kv.set(
-      storageKeys.entries(kind),
-      all.map((e) => (e.id === entry.id ? entry : e)),
+    await this.kv.update<Entry[]>(storageKeys.entries(kind), (all) =>
+      (all ?? []).map((e) => (e.id === entry.id ? entry : e)),
     );
   }
 
   async remove(kind: EntryKind, id: string): Promise<void> {
-    const all = await this.getAll(kind);
-    await this.kv.set(
-      storageKeys.entries(kind),
-      all.filter((e) => e.id !== id),
+    await this.kv.update<Entry[]>(storageKeys.entries(kind), (all) =>
+      (all ?? []).filter((e) => e.id !== id),
     );
   }
 }

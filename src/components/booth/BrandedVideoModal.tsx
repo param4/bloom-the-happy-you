@@ -44,7 +44,7 @@ export function BrandedVideoModal({ video, onClose }: BrandedVideoModalProps) {
         <>
           <Text className="font-serif text-[22px] text-ink">Your moment, framed</Text>
           <Text className="mb-4 mt-1 font-body text-[13px] text-ink-soft">
-            Wrapped in Bloom — download it or share it, it's yours.
+            Wrapped in Bloom — download it or share it, it’s yours.
           </Text>
 
           <View ref={frameRef} collapsable={false}>

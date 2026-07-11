@@ -77,14 +77,14 @@ export default function VisionScreen() {
           >
             <Wand2 size={22} color="#fff" />
             <Text className="flex-1 font-serif text-[17px] text-white">
-              Take today's manifestation moment
+              Take today’s manifestation moment
             </Text>
           </GradientCard>
         </Pressable>
 
         <ReminderRow />
 
-        <SectionLabel>What I'm calling in</SectionLabel>
+        <SectionLabel>What I’m calling in</SectionLabel>
         <View className="gap-3">
           {rows.map((row, i) => (
             <View key={i} className="flex-row gap-3">

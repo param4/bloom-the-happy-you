@@ -12,23 +12,21 @@ export class AsyncStorageManifestationRepository implements IManifestationReposi
   }
 
   async add(manifestation: Manifestation): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(storageKeys.manifestations, [manifestation, ...all]);
+    await this.kv.update<Manifestation[]>(storageKeys.manifestations, (all) => [
+      manifestation,
+      ...(all ?? []),
+    ]);
   }
 
   async update(manifestation: Manifestation): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.manifestations,
-      all.map((m) => (m.id === manifestation.id ? manifestation : m)),
+    await this.kv.update<Manifestation[]>(storageKeys.manifestations, (all) =>
+      (all ?? []).map((m) => (m.id === manifestation.id ? manifestation : m)),
     );
   }
 
   async remove(id: string): Promise<void> {
-    const all = await this.getAll();
-    await this.kv.set(
-      storageKeys.manifestations,
-      all.filter((m) => m.id !== id),
+    await this.kv.update<Manifestation[]>(storageKeys.manifestations, (all) =>
+      (all ?? []).filter((m) => m.id !== id),
     );
   }
 }

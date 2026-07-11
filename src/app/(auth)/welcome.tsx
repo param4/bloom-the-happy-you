@@ -219,8 +219,14 @@ export default function Welcome() {
           </View>
 
           <Text className="mt-4 px-2 text-center font-body text-[11.5px] leading-4 text-ink-soft">
-            Your account and entries are kept private. Guest mode stays on this device only.
+            Your journal entries stay on this device. Your account email is stored securely by
+            our sign-in provider. Guest mode keeps everything on this device only.
           </Text>
+          <Pressable onPress={() => router.push('/privacy')} className="mt-1 items-center py-1">
+            <Text className="font-body-extrabold text-[11.5px] text-accent-deep">
+              Privacy policy
+            </Text>
+          </Pressable>
         </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>

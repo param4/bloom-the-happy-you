@@ -59,6 +59,12 @@ export interface IMoodRepository {
 export interface ISettingsRepository {
   get(): Promise<Settings>;
   save(settings: Settings): Promise<void>;
+  /**
+   * Atomic read-modify-write. Settings is a single shared blob written by
+   * several features (streak, theme, reminder, moment recency) — always change
+   * one field through this so concurrent writers can't clobber each other.
+   */
+  update(updater: (settings: Settings) => Settings): Promise<Settings>;
 }
 
 /** User-written ("my own") affirmations. */

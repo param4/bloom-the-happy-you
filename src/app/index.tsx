@@ -8,12 +8,13 @@ import { useProfileStore } from '@/state/profileStore';
  * Entry redirect — hydration already completed in the root layout.
  *
  * Login visibility is controlled by the EXPO_PUBLIC_HIDE_LOGIN env flag (see
- * .env). When hidden, rather than sending signed-out users to the
+ * .env.example). When hidden, rather than sending signed-out users to the
  * `(auth)/welcome` screen, we silently continue them as a guest so the app
- * opens straight into the tabs. The welcome screen and all auth code remain
- * in place — set EXPO_PUBLIC_HIDE_LOGIN=false to bring it back.
+ * opens straight into the tabs. Hiding is explicit opt-in (the exact string
+ * "true") so a build environment that's missing the var can never silently
+ * ship with auth bypassed.
  */
-const HIDE_LOGIN = process.env.EXPO_PUBLIC_HIDE_LOGIN !== 'false';
+const HIDE_LOGIN = process.env.EXPO_PUBLIC_HIDE_LOGIN === 'true';
 
 export default function Index() {
   const profile = useProfileStore((s) => s.profile);

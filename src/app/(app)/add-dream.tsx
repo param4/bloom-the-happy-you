@@ -41,6 +41,7 @@ export default function AddDreamScreen() {
   const [affirmation, setAffirmation] = useState(existing?.affirmation ?? '');
   const [why, setWhy] = useState(existing?.why ?? '');
   const [imageUri, setImageUri] = useState<string | undefined>(existing?.imageUri);
+  const [saving, setSaving] = useState(false);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -53,24 +54,31 @@ export default function AddDreamScreen() {
   };
 
   const save = async () => {
-    if (!title.trim() || !affirmation.trim()) return;
-    // Persist only a freshly picked (volatile cache) URI; keep an unchanged
-    // durable one as-is, and treat a cleared image as removed.
-    const durableUri =
-      imageUri && imageUri !== existing?.imageUri
-        ? await media.persistImage(imageUri)
-        : imageUri;
-    const draft = {
-      title: title.trim(),
-      affirmation: affirmation.trim(),
-      why: why.trim(),
-      imageUri: durableUri,
-    };
-    if (isEdit) await update(existing.id, draft);
-    else await add(draft);
-    haptics.success();
-    flash(isEdit ? 'Dream updated ✨' : 'Added to your vision board ✨');
-    router.back();
+    if (!title.trim() || !affirmation.trim() || saving) return;
+    setSaving(true);
+    try {
+      // Persist only a freshly picked (volatile cache) URI; keep an unchanged
+      // durable one as-is, and treat a cleared image as removed.
+      const durableUri =
+        imageUri && imageUri !== existing?.imageUri
+          ? await media.persistImage(imageUri)
+          : imageUri;
+      const draft = {
+        title: title.trim(),
+        affirmation: affirmation.trim(),
+        why: why.trim(),
+        imageUri: durableUri,
+      };
+      if (isEdit) await update(existing.id, draft);
+      else await add(draft);
+      haptics.success();
+      flash(isEdit ? 'Dream updated ✨' : 'Added to your vision board ✨');
+      router.back();
+    } catch {
+      flash("That didn't save — please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const confirmDelete = () => {
@@ -102,7 +110,7 @@ export default function AddDreamScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text className="mb-3 font-body text-[13px] text-ink-soft">
-          Write your affirmation as if it's already true.
+          Write your affirmation as if it’s already true.
         </Text>
 
         <Pressable
@@ -140,8 +148,8 @@ export default function AddDreamScreen() {
         />
 
         <View className="mt-2 flex-row gap-2.5">
-          <SoftButton primary onPress={save} className="flex-1">
-            {isEdit ? 'Save changes' : 'Add it'}
+          <SoftButton primary onPress={save} disabled={saving} className="flex-1">
+            {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add it'}
           </SoftButton>
           <SoftButton ghost onPress={() => router.back()}>Cancel</SoftButton>
         </View>

@@ -44,8 +44,15 @@ export const createEntriesStore = (services: AppServices) =>
       await services.entries.add(kind, entry);
       set({ [kind]: [entry, ...get()[kind]] } as Pick<EntriesState, EntryKind>);
       // Journaling counts as showing up — the streak advances at most
-      // once per day (StreakService owns that rule).
-      await useStreakStore.getState().recordToday();
+      // once per day (StreakService owns that rule). The entry is already
+      // persisted, so a streak-write failure must not fail this save
+      // (a rejected promise here would read as "not saved" and invite a
+      // retry that duplicates the entry).
+      try {
+        await useStreakStore.getState().recordToday();
+      } catch {
+        // The streak catches up on the next entry.
+      }
     },
     async editEntry(kind, id, patch) {
       const current = get()[kind].find((e) => e.id === id);
@@ -58,8 +65,13 @@ export const createEntriesStore = (services: AppServices) =>
       >);
     },
     async removeEntry(kind, id) {
+      const entry = get()[kind].find((e) => e.id === id);
       await services.entries.remove(kind, id);
       set({ [kind]: get()[kind].filter((e) => e.id !== id) } as Pick<EntriesState, EntryKind>);
+      // Best-effort file cleanup once the record is gone, so deleted
+      // reflections don't leave orphaned videos/audio on disk forever.
+      const mediaUri = entry?.videoUri ?? entry?.audioUri;
+      if (mediaUri) await services.media.remove(mediaUri).catch(() => {});
     },
   }));
 

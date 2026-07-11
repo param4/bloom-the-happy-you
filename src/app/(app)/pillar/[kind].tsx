@@ -48,6 +48,7 @@ export default function PillarScreen() {
   const [pi, setPi] = useState(dayIndex() % prompts.length);
   const [mode, setMode] = useState<Mode>('write');
   const [text, setText] = useState('');
+  const [saving, setSaving] = useState(false);
   const [sendEntry, setSendEntry] = useState<{ content: string } | null>(null);
 
   if (!isEntryKind(kind)) return <Redirect href="/(app)/(tabs)" />;
@@ -60,27 +61,50 @@ export default function PillarScreen() {
     flash('Saved. A little more of you, kept safe.');
   };
 
+  // Serializes saves (a double-tap would otherwise persist the entry twice)
+  // and turns a persistence failure into a gentle toast instead of an
+  // unhandled rejection with no feedback.
+  const guardedSave = async (save: () => Promise<void>) => {
+    if (saving) return;
+    setSaving(true);
+    try {
+      await save();
+      celebrate();
+    } catch {
+      flash("That didn't save — please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const saveText = async () => {
     if (!text.trim()) return;
-    await addEntry(kind, { type: 'text', content: text.trim() });
-    setText('');
-    celebrate();
-  };
-
-  const saveVoice = async (audioUri?: string) => {
-    await addEntry(kind, { type: 'voice', content: 'A voice reflection', audioUri });
-    celebrate();
-  };
-
-  const saveVideo = async (label: string, uri?: string) => {
-    const videoUri = uri ? await media.persistVideo(uri) : undefined;
-    await addEntry(kind, {
-      type: 'video',
-      content: label.trim() || 'A recorded reflection',
-      videoUri,
+    await guardedSave(async () => {
+      await addEntry(kind, { type: 'text', content: text.trim() });
+      setText('');
     });
-    celebrate();
   };
+
+  const saveVoice = (audioUri?: string) =>
+    guardedSave(async () => {
+      // Recordings land in the volatile cache — copy to app storage first.
+      const durableUri = audioUri ? await media.persistAudio(audioUri) : undefined;
+      await addEntry(kind, {
+        type: 'voice',
+        content: 'A voice reflection',
+        audioUri: durableUri,
+      });
+    });
+
+  const saveVideo = (label: string, uri?: string) =>
+    guardedSave(async () => {
+      const videoUri = uri ? await media.persistVideo(uri) : undefined;
+      await addEntry(kind, {
+        type: 'video',
+        content: label.trim() || 'A recorded reflection',
+        videoUri,
+      });
+    });
 
   const shareEntry = (e: Entry) =>
     useShareCardStore.getState().open({
@@ -123,7 +147,7 @@ export default function PillarScreen() {
 
         {mode === 'write' && (
           <View className="mt-3">
-            <SoftButton primary onPress={saveText}>
+            <SoftButton primary onPress={saveText} disabled={saving}>
               Keep it
             </SoftButton>
           </View>
@@ -151,7 +175,7 @@ export default function PillarScreen() {
           <View className="mt-3.5 flex-row items-center gap-3 rounded-[16px] bg-accent-soft px-4 py-3.5">
             <Send size={20} color={colors.accentDeep} />
             <Text className="flex-1 font-body text-[13px] leading-[19px] text-accent-deep">
-              Appreciation grows when it's spoken. Want to tell them?
+              Appreciation grows when it’s spoken. Want to tell them?
             </Text>
             <SoftButton
               onPress={() => setSendEntry(recent[0] ?? { content: 'someone you value' })}
@@ -166,7 +190,7 @@ export default function PillarScreen() {
         <View className="mt-6">
           <SectionLabel>The last few days</SectionLabel>
           {recent.length === 0 && (
-            <EmptyNote>Nothing here yet — today's a lovely place to start.</EmptyNote>
+            <EmptyNote>Nothing here yet — today’s a lovely place to start.</EmptyNote>
           )}
           <View className="gap-2.5">
             {recent.map((entry) => (

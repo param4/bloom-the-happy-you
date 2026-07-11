@@ -1,5 +1,6 @@
 import { useClerk } from '@clerk/clerk-expo';
-import { LogOut, Trash2 } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { LogOut, ShieldCheck, Trash2, UserX } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Image, Modal, Pressable, Text, View } from 'react-native';
 
@@ -15,6 +16,8 @@ import { shadows } from '@/theme/shadows';
 interface GreetingHeaderProps {
   profile: Profile;
   onClearData(): void;
+  /** Deletes the Clerk account and all local data (Clerk-backed profiles only). */
+  onDeleteAccount(): void;
 }
 
 const THEME_SWATCHES: { key: ThemeKey; label: string; color: string }[] = [
@@ -24,7 +27,8 @@ const THEME_SWATCHES: { key: ThemeKey; label: string; color: string }[] = [
 ];
 
 /** Bloom wordmark + avatar with the theme picker and clear-data popover. */
-export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
+export function GreetingHeader({ profile, onClearData, onDeleteAccount }: GreetingHeaderProps) {
+  const router = useRouter();
   const { colors, gradients } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = (profile.name || 'friend').split(' ')[0];
@@ -51,6 +55,23 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
         { text: 'Clear data', style: 'destructive', onPress: onClearData },
       ],
     );
+  };
+
+  const confirmDeleteAccount = () => {
+    setMenuOpen(false);
+    Alert.alert(
+      'Delete your account?',
+      'This permanently deletes your Bloom account and everything in the app — journals, recordings, vision board and streak. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete account', style: 'destructive', onPress: onDeleteAccount },
+      ],
+    );
+  };
+
+  const openPrivacy = () => {
+    setMenuOpen(false);
+    router.push('/privacy');
   };
 
   return (
@@ -125,13 +146,36 @@ export function GreetingHeader({ profile, onClearData }: GreetingHeaderProps) {
 
             <Pressable
               onPress={signOut}
-              className="flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
+              className="mb-2 flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
             >
               <LogOut size={16} color={colors.ink} />
               <Text className="font-body-extrabold text-[13px] text-ink">
                 {profile.id ? 'Sign out' : 'Leave guest mode'}
               </Text>
             </Pressable>
+
+            <Pressable
+              onPress={openPrivacy}
+              className={`flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2 ${
+                profile.id ? 'mb-2' : ''
+              }`}
+            >
+              <ShieldCheck size={16} color={colors.ink} />
+              <Text className="font-body-extrabold text-[13px] text-ink">Privacy policy</Text>
+            </Pressable>
+
+            {/* Play policy: apps with account creation must offer in-app deletion. */}
+            {profile.id && (
+              <Pressable
+                onPress={confirmDeleteAccount}
+                className="flex-row items-center justify-center gap-2 rounded-xl border border-line bg-cream py-2"
+              >
+                <UserX size={16} color={colors.accentDeep} />
+                <Text className="font-body-extrabold text-[13px] text-accent-deep">
+                  Delete account
+                </Text>
+              </Pressable>
+            )}
           </View>
         </Pressable>
       </Modal>
