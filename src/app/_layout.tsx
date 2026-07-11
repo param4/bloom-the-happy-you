@@ -28,6 +28,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ShareCardModal } from '@/components/share/ShareCardModal';
 import { BloomBurst } from '@/components/ui/BloomBurst';
 import { ToastHost } from '@/components/ui/Toast';
+import { HIDE_LOGIN } from '@/constants/flags';
 import { ClerkProfileSync } from '@/providers/ClerkProfileSync';
 import { ServicesProvider } from '@/providers/ServicesProvider';
 import { hydrateAll } from '@/state/hydration';
@@ -112,7 +113,9 @@ function SplashGate({
   children,
 }: PropsWithChildren<{ fontsLoaded: boolean; hydrated: boolean }>) {
   const { isLoaded: clerkLoaded } = useAuth();
-  const ready = fontsLoaded && hydrated && clerkLoaded;
+  // With login hidden no auth screen is reachable, so a slow or unreachable
+  // Clerk instance must not hold every user at the splash screen.
+  const ready = fontsLoaded && hydrated && (clerkLoaded || HIDE_LOGIN);
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
