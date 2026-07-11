@@ -21,10 +21,12 @@ export default function ManifestationMomentModal() {
 
   if (dream === 'loading') return <ModalCard dim>{null}</ModalCard>;
 
+  const isEmpty = dream === null;
+
   return (
     <ModalCard dim>
       <Animated.View entering={ZoomIn.springify().damping(14)} className="w-full">
-        {dream === null ? (
+        {isEmpty ? (
           <Text className="my-4 text-center font-body text-base leading-6 text-ink">
             Every dream on your board has come true — or your board is waiting for its first
             one. Add what you’re calling in.
@@ -44,9 +46,20 @@ export default function ManifestationMomentModal() {
         )}
 
         <View className="items-center">
-          <SoftButton primary onPress={() => router.back()} className="mt-4 min-w-[160px]">
-            I feel it
-          </SoftButton>
+          {isEmpty ? (
+            // Dismiss the modal and land on the vision tab, where dreams are added.
+            <SoftButton
+              primary
+              onPress={() => router.dismissTo('/(app)/(tabs)/vision')}
+              className="mt-4 min-w-[160px]"
+            >
+              Add a dream
+            </SoftButton>
+          ) : (
+            <SoftButton primary onPress={() => router.back()} className="mt-4 min-w-[160px]">
+              I feel it
+            </SoftButton>
+          )}
         </View>
       </Animated.View>
     </ModalCard>

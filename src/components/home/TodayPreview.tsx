@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 
 import { TodoProgress } from '@/components/todo/TodoProgress';
@@ -31,21 +32,40 @@ export function TodayPreview({ todos, onToggle, onOpenList }: TodayPreviewProps)
         Today’s list
       </SectionLabel>
       <Card className="rounded-[20px] p-4">
-        <View className="mb-3">
-          <TodoProgress done={doneCount} total={todos.length} compact />
-        </View>
-        <View className="gap-1">
-          {todos.slice(0, 4).map((todo) => (
-            <TodoRow key={todo.id} todo={todo} onToggle={() => onToggle(todo.id)} compact />
-          ))}
-        </View>
-        {todos.length > 0 && doneCount === todos.length && (
-          <View className="mt-2.5 flex-row items-center gap-1.5">
-            <BloomLogo size={16} color={colors.accentDeep} />
-            <Text className="font-serif text-[13px] text-accent-deep">
-              All tended to — beautifully done.
+        {todos.length === 0 ? (
+          <View className="items-center py-1">
+            <Text className="mb-3 text-center font-body text-[13px] text-ink-soft">
+              Nothing on today’s list yet.
             </Text>
+            <Pressable
+              onPress={onOpenList}
+              className="flex-row items-center justify-center gap-2 rounded-2xl border border-accent bg-accent-soft px-4 py-2.5"
+            >
+              <Plus size={16} color={colors.accentDeep} />
+              <Text className="font-body-extrabold text-[13px] text-accent-deep">
+                Add something to do
+              </Text>
+            </Pressable>
           </View>
+        ) : (
+          <>
+            <View className="mb-3">
+              <TodoProgress done={doneCount} total={todos.length} compact />
+            </View>
+            <View className="gap-1">
+              {todos.slice(0, 4).map((todo) => (
+                <TodoRow key={todo.id} todo={todo} onToggle={() => onToggle(todo.id)} compact />
+              ))}
+            </View>
+            {doneCount === todos.length && (
+              <View className="mt-2.5 flex-row items-center gap-1.5">
+                <BloomLogo size={16} color={colors.accentDeep} />
+                <Text className="font-serif text-[13px] text-accent-deep">
+                  All tended to — beautifully done.
+                </Text>
+              </View>
+            )}
+          </>
         )}
       </Card>
     </View>
