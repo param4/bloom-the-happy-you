@@ -1,10 +1,11 @@
-import { Send } from 'lucide-react-native';
+import { Image as ImageIcon, Send } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { OverlayModal } from '@/components/ui/OverlayModal';
 import { SoftButton } from '@/components/ui/SoftButton';
 import { shareText } from '@/lib/share';
+import { useShareCardStore } from '@/state/shareCardStore';
 import { useToastStore } from '@/state/toastStore';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -78,6 +79,15 @@ export function SendModal({ entry, visible, onClose }: SendModalProps) {
     onClose();
   };
 
+  const shareAsCard = () => {
+    onClose();
+    useShareCardStore.getState().open({
+      kind: 'entry',
+      label: 'appreciating',
+      text: msg,
+    });
+  };
+
   return (
     <OverlayModal
       visible={visible}
@@ -89,8 +99,9 @@ export function SendModal({ entry, visible, onClose }: SendModalProps) {
             <Send size={16} color="#fff" />
             <Text className="font-body-extrabold text-[15px] text-white">Share</Text>
           </SoftButton>
-          <SoftButton ghost onPress={() => finish('Copied — go make their day.')}>
-            Copy
+          <SoftButton primary onPress={shareAsCard} className="flex-1" raw>
+            <ImageIcon size={16} color="#fff" />
+            <Text className="font-body-extrabold text-[15px] text-white">Share as Card</Text>
           </SoftButton>
         </View>
       }

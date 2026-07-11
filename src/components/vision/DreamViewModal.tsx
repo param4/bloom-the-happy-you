@@ -40,12 +40,6 @@ export function DreamViewModal({
       footer={
         dream ? (
           <View className="flex-row gap-2.5">
-            <SoftButton ghost raw onPress={onEdit} className="flex-1">
-              <View className="flex-row items-center gap-2">
-                <Pencil size={16} color={colors.ink} />
-                <Text className="font-body-extrabold text-[15px] text-ink">Edit</Text>
-              </View>
-            </SoftButton>
             {achieved ? (
               <SoftButton onPress={onUndo} className="flex-1" raw>
                 <View className="flex-row items-center gap-2">
@@ -61,6 +55,12 @@ export function DreamViewModal({
                 </View>
               </SoftButton>
             )}
+            <SoftButton ghost raw onPress={onEdit}>
+              <Pencil size={16} color={colors.ink} />
+            </SoftButton>
+            <SoftButton ghost raw onPress={onDelete}>
+              <Trash2 size={16} color={colors.inkSoft} />
+            </SoftButton>
           </View>
         ) : null
       }
@@ -68,13 +68,6 @@ export function DreamViewModal({
       {dream ? (
         <View>
           <DreamDetails dream={dream} showBadge />
-
-          <SoftButton raw onPress={onDelete} className="mt-5 self-start bg-transparent px-0 py-1">
-            <View className="flex-row items-center gap-1.5">
-              <Trash2 size={15} color={colors.inkSoft} />
-              <Text className="font-body-extrabold text-[13px] text-ink-soft">Delete dream</Text>
-            </View>
-          </SoftButton>
         </View>
       ) : null}
     </OverlayModal>
