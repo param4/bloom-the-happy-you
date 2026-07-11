@@ -24,6 +24,7 @@ export default function AppLayout() {
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="pillar/[kind]" />
+      <Stack.Screen name="recap" />
       <Stack.Screen name="todo-history" />
       <Stack.Screen
         name="lift-me-up"

@@ -1,13 +1,12 @@
 import { useRouter } from 'expo-router';
 import { BookHeart, ChevronRight, Video } from 'lucide-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { GreetingHeader } from '@/components/home/GreetingHeader';
 import { MomentCta } from '@/components/home/MomentCta';
 import { MoodCheckIn } from '@/components/home/MoodCheckIn';
 import { PillarCards } from '@/components/home/PillarCards';
-import { RecapModal } from '@/components/home/RecapModal';
 import { StreakCard } from '@/components/home/StreakCard';
 import { TodayPreview } from '@/components/home/TodayPreview';
 import { Card } from '@/components/ui/Card';
@@ -40,7 +39,6 @@ export default function HomeScreen() {
   const moodToday = useMoodStore((s) => s.today);
   const pickMood = useMoodStore((s) => s.pickMood);
 
-  const [recapOpen, setRecapOpen] = useState(false);
   const monthName = MONTHS[new Date().getMonth()];
 
   const liftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -96,7 +94,7 @@ export default function HomeScreen() {
         />
 
         {/* monthly recap */}
-        <Pressable onPress={() => setRecapOpen(true)} className="mt-4">
+        <Pressable onPress={() => router.push('/(app)/recap')} className="mt-4">
           <Card bordered className="flex-row items-center gap-3 rounded-[20px] p-4">
             <View className="h-[46px] w-[46px] items-center justify-center rounded-[14px] bg-accent-soft">
               <BookHeart size={22} color={colors.accentDeep} />
@@ -129,8 +127,6 @@ export default function HomeScreen() {
           </Text>
         </Pressable>
       </View>
-
-      <RecapModal visible={recapOpen} onClose={() => setRecapOpen(false)} />
     </Screen>
   );
 }
