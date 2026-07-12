@@ -41,7 +41,7 @@ If this policy changes, the updated version will be posted at this address with 
 
 ## Contact
 
-**[Add your contact email here before publishing]**
+Questions about this policy? Email **parminder94171@gmail.com**.
 
 <!--
   HOSTING NOTE (remove before publishing):
