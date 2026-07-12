@@ -1,9 +1,9 @@
 ---
-title: Bloom — Privacy Policy
+title: Bloom - The Happy You — Privacy Policy
 permalink: /privacy-policy/
 ---
 
-# Bloom — Privacy Policy
+# Bloom - The Happy You — Privacy Policy
 
 _Effective 11 July 2026_
 
