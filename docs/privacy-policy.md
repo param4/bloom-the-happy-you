@@ -1,8 +1,13 @@
+---
+title: Bloom — Privacy Policy
+permalink: /privacy-policy/
+---
+
 # Bloom — Privacy Policy
 
 _Effective 11 July 2026_
 
-Bloom ("the app") is a personal wellbeing journal. It is built so that your inner world stays private.
+Bloom ("the app") is a personal wellbeing journal published by GM Studios - Learn & Grow. It is built so that your inner world stays private.
 
 ## What we store, and where
 
@@ -41,22 +46,5 @@ If this policy changes, the updated version will be posted at this address with 
 
 ## Contact
 
-Questions about this policy? Email **parminder94171@gmail.com**.
-
-<!--
-  HOSTING NOTE (remove before publishing):
-  Google Play requires this policy at a public URL, linked in the Play Console
-  listing AND referenced in the Data Safety form. Host this file anywhere
-  public (e.g. GitHub Pages, Notion public page, your site) and fill in the
-  contact email above.
-
-  Data Safety form guidance for this app (guest-only build):
-  - Declare NO data collected. Journal/mood/media content is not "collected"
-    in Play's sense (it never leaves the device), and with login hidden no
-    account, email, or name is gathered either.
-  - No account creation means Play's account-deletion requirement does not
-    apply to this release.
-  - If login/accounts are re-enabled later, update this policy and the Data
-    Safety form (Personal info → Email address, Name; deletion via the in-app
-    "Delete account" flow) BEFORE shipping that build.
--->
+GM Studios - Learn & Grow
+Email: **maheshwarigarima4@gmail.com**
