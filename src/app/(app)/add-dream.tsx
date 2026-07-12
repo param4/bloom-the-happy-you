@@ -15,6 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Field } from '@/components/ui/Field';
+import { PhotoCropModal } from '@/components/vision/PhotoCropModal';
 import { SoftButton } from '@/components/ui/SoftButton';
 import { haptics } from '@/lib/haptics';
 import { TopBar } from '@/components/ui/TopBar';
@@ -41,16 +42,17 @@ export default function AddDreamScreen() {
   const [affirmation, setAffirmation] = useState(existing?.affirmation ?? '');
   const [why, setWhy] = useState(existing?.why ?? '');
   const [imageUri, setImageUri] = useState<string | undefined>(existing?.imageUri);
+  const [cropUri, setCropUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const pickImage = async () => {
+    // Pick without native editing, then crop in-app (the OS cropper's confirm
+    // button is hidden under edge-to-edge in release builds).
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
-      allowsEditing: true,
-      aspect: [4, 3],
+      quality: 1,
     });
-    if (!result.canceled && result.assets[0]) setImageUri(result.assets[0].uri);
+    if (!result.canceled && result.assets[0]) setCropUri(result.assets[0].uri);
   };
 
   const save = async () => {
@@ -164,6 +166,15 @@ export default function AddDreamScreen() {
           </Pressable>
         )}
       </ScrollView>
+
+      <PhotoCropModal
+        uri={cropUri}
+        onCancel={() => setCropUri(null)}
+        onSave={(uri) => {
+          setImageUri(uri);
+          setCropUri(null);
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }
